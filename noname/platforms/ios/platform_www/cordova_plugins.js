@@ -236,6 +236,22 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "window.Media"
       ]
+    },
+    {
+      "id": "cordova-plugin-file-transfer.FileTransferError",
+      "file": "plugins/cordova-plugin-file-transfer/www/FileTransferError.js",
+      "pluginId": "cordova-plugin-file-transfer",
+      "clobbers": [
+        "window.FileTransferError"
+      ]
+    },
+    {
+      "id": "cordova-plugin-file-transfer.FileTransfer",
+      "file": "plugins/cordova-plugin-file-transfer/www/FileTransfer.js",
+      "pluginId": "cordova-plugin-file-transfer",
+      "clobbers": [
+        "window.FileTransfer"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -247,6 +263,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-inappbrowser": "5.0.0",
     "cordova-plugin-splashscreen": "6.0.2",
     "cordova-plugin-statusbar": "3.0.0",
-    "cordova-plugin-media": "6.1.0"
+    "cordova-plugin-media": "6.1.0",
+    "cordova-plugin-file-transfer": "2.0.0-dev"
   };
 });

@@ -51,6 +51,10 @@
             {
               "xml": "<preference name=\"KeepAVAudioSessionAlwaysActive\" value=\"NO\" />",
               "count": 1
+            },
+            {
+              "xml": "<feature name=\"FileTransfer\"><param name=\"ios-package\" value=\"CDVFileTransfer\" /></feature>",
+              "count": 1
             }
           ]
         }
@@ -84,6 +88,9 @@
     },
     "cordova-plugin-media": {
       "KEEP_AVAUDIOSESSION_ALWAYS_ACTIVE": "NO",
+      "PACKAGE_NAME": "online.nonamekill.android"
+    },
+    "cordova-plugin-file-transfer": {
       "PACKAGE_NAME": "online.nonamekill.android"
     }
   },
@@ -325,6 +332,22 @@
       "clobbers": [
         "window.Media"
       ]
+    },
+    {
+      "id": "cordova-plugin-file-transfer.FileTransferError",
+      "file": "plugins/cordova-plugin-file-transfer/www/FileTransferError.js",
+      "pluginId": "cordova-plugin-file-transfer",
+      "clobbers": [
+        "window.FileTransferError"
+      ]
+    },
+    {
+      "id": "cordova-plugin-file-transfer.FileTransfer",
+      "file": "plugins/cordova-plugin-file-transfer/www/FileTransfer.js",
+      "pluginId": "cordova-plugin-file-transfer",
+      "clobbers": [
+        "window.FileTransfer"
+      ]
     }
   ],
   "plugin_metadata": {
@@ -336,6 +359,7 @@
     "cordova-plugin-inappbrowser": "5.0.0",
     "cordova-plugin-splashscreen": "6.0.2",
     "cordova-plugin-statusbar": "3.0.0",
-    "cordova-plugin-media": "6.1.0"
+    "cordova-plugin-media": "6.1.0",
+    "cordova-plugin-file-transfer": "2.0.0-dev"
   }
 }

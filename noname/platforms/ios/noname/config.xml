@@ -76,4 +76,7 @@
         <param name="ios-package" value="CDVSound" />
     </feature>
     <preference name="KeepAVAudioSessionAlwaysActive" value="NO" />
+    <feature name="FileTransfer">
+        <param name="ios-package" value="CDVFileTransfer" />
+    </feature>
 </widget>

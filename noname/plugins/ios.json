@@ -34,6 +34,9 @@
     "cordova-plugin-media": {
       "KEEP_AVAUDIOSESSION_ALWAYS_ACTIVE": "NO",
       "PACKAGE_NAME": "online.nonamekill.android"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "online.nonamekill.android"
     }
   },
   "dependent_plugins": {}

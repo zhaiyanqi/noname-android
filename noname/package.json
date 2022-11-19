@@ -18,6 +18,7 @@
     "cordova-plugin-battery-status": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file": "^7.0.0",
+    "cordova-plugin-file-transfer": "github:apache/cordova-plugin-file-transfer",
     "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-media": "^6.1.0",
@@ -43,7 +44,8 @@
       "cordova-plugin-statusbar": {},
       "cordova-plugin-media": {
         "KEEP_AVAUDIOSESSION_ALWAYS_ACTIVE": "NO"
-      }
+      },
+      "cordova-plugin-file-transfer": {}
     }
   }
 }

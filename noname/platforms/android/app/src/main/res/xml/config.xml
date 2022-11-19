@@ -1,74 +1,46 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget
-    id="online.nonamekill.android"
-    version="1.0.0">
+<widget id="online.nonamekill.android" version="1.0.0">
     <name>noname</name>
     <description>Sample Apache Cordova App</description>
-    <author
-        email="dev@cordova.apache.org"
-        href="https://cordova.apache.org">
+    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
         Apache Cordova Team
     </author>
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
-    <preference
-        name="loglevel"
-        value="DEBUG" />
+    <preference name="loglevel" value="DEBUG" />
+    <access origin="*" />
     <feature name="File">
-        <param
-            name="android-package"
-            value="org.apache.cordova.file.FileUtils" />
-        <param
-            name="onload"
-            value="true" />
+        <param name="android-package" value="org.apache.cordova.file.FileUtils" />
+        <param name="onload" value="true" />
     </feature>
     <allow-navigation href="cdvfile:*" />
     <feature name="Notification">
-        <param
-            name="android-package"
-            value="org.apache.cordova.dialogs.Notification" />
+        <param name="android-package" value="org.apache.cordova.dialogs.Notification" />
     </feature>
     <feature name="Insomnia">
-        <param
-            name="android-package"
-            value="nl.xservices.plugins.Insomnia" />
+        <param name="android-package" value="nl.xservices.plugins.Insomnia" />
     </feature>
     <feature name="Battery">
-        <param
-            name="android-package"
-            value="org.apache.cordova.batterystatus.BatteryListener" />
+        <param name="android-package" value="org.apache.cordova.batterystatus.BatteryListener" />
     </feature>
     <feature name="InAppBrowser">
-        <param
-            name="android-package"
-            value="org.apache.cordova.inappbrowser.InAppBrowser" />
+        <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
     </feature>
     <feature name="SplashScreen">
-        <param
-            name="android-package"
-            value="org.apache.cordova.splashscreen.SplashScreen" />
-        <param
-            name="onload"
-            value="true" />
+        <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
+        <param name="onload" value="true" />
     </feature>
     <feature name="StatusBar">
-        <param
-            name="android-package"
-            value="org.apache.cordova.statusbar.StatusBar" />
-        <param
-            name="onload"
-            value="true" />
+        <param name="android-package" value="org.apache.cordova.statusbar.StatusBar" />
+        <param name="onload" value="true" />
     </feature>
-    <preference
-        name="StatusBarOverlaysWebView"
-        value="true" />
+    <preference name="StatusBarOverlaysWebView" value="true" />
     <feature name="Media">
-        <param
-            name="android-package"
-            value="org.apache.cordova.media.AudioHandler" />
+        <param name="android-package" value="org.apache.cordova.media.AudioHandler" />
     </feature>
-    <preference
-        name="AndroidInsecureFileModeEnabled"
-        value="true" />
+    <preference name="AndroidInsecureFileModeEnabled" value="true" />
+    <feature name="FileTransfer">
+        <param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer" />
+    </feature>
 </widget>
