@@ -1,0 +1,49 @@
+{
+  "name": "online.nonamekill.android",
+  "displayName": "noname",
+  "version": "1.0.0",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Apache Cordova Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "cordova-android": "^10.1.2",
+    "cordova-ios": "^6.2.0",
+    "cordova-plugin-battery-status": "^2.0.3",
+    "cordova-plugin-dialogs": "^2.0.2",
+    "cordova-plugin-file": "^7.0.0",
+    "cordova-plugin-inappbrowser": "^5.0.0",
+    "cordova-plugin-insomnia": "^4.3.0",
+    "cordova-plugin-media": "^6.1.0",
+    "cordova-plugin-splashscreen": "^6.0.2",
+    "cordova-plugin-statusbar": "^3.0.0",
+    "cordova-plugin-vibration": "^3.1.1"
+  },
+  "cordova": {
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "plugins": {
+      "cordova-plugin-vibration": {},
+      "cordova-plugin-file": {
+        "ANDROIDX_WEBKIT_VERSION": "1.4.0"
+      },
+      "cordova-plugin-dialogs": {},
+      "cordova-plugin-insomnia": {},
+      "cordova-plugin-battery-status": {},
+      "cordova-plugin-inappbrowser": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-media": {
+        "KEEP_AVAUDIOSESSION_ALWAYS_ACTIVE": "NO"
+      }
+    }
+  }
+}
