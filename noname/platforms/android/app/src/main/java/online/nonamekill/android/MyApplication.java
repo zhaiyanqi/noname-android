@@ -7,17 +7,13 @@ import android.graphics.Typeface;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MyApplication extends Application {
+import online.nonamekill.common.util.ThreadUtil;
 
-    private static ExecutorService threadPool = null;
+public class MyApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        threadPool = Executors.newFixedThreadPool(3);
-    }
-
-    public static ExecutorService getThreadPool() {
-        return threadPool;
+        ThreadUtil.init();
     }
 }

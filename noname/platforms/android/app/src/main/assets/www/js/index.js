@@ -6,16 +6,14 @@
             this.initJavaArgs();
         },
         initJavaArgs: function () {
-            if (window.jsBridge && window.jsBridge.getGamePath && false) {
-                this.url = window.jsBridge.getGamePath();
-                console.log("load, this.url: " + this.url);
+            this.url = window.jsBridge.getGamePath();
+            console.log("load, this.url: " + this.url);
 
-                if (localStorage.getItem("noname_inited") != this.url) {
-                    localStorage.setItem('noname_inited', this.url);
-                }
-
-                this.start();
+            if (localStorage.getItem("noname_inited") != this.url) {
+                localStorage.setItem('noname_inited', this.url);
             }
+
+            this.start();
         },
         afterLoad: function() {
             console.log("afterLoad ");

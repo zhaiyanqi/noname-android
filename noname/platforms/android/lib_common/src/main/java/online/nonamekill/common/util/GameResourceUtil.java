@@ -1,4 +1,4 @@
-package online.nonamekill.common;
+package online.nonamekill.common.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -15,20 +15,38 @@ import java.util.ArrayList;
 public class GameResourceUtil {
     private static final String TAG = "GameResourceUtil";
 
-    public static void copyAssetToGameFolder(Context context, String folderName, Runnable onFinish) {
+    public static class onCopyListener {
+        public void onProgressChanged(int progress) {
+        }
+
+        public void onSizeIncrease() {
+        }
+
+        public void onFinish() {
+        }
+    }
+
+    public static void copyAssetToGameFolder(Context context, String folderName, onCopyListener listener) {
         String gameFolder = context.getExternalFilesDir(null).getAbsolutePath();
         AssetManager assetManager = context.getAssets();
 
-        ArrayList<String> paths = fetchAllPath(assetManager, folderName);
+        ArrayList<String> paths = fetchAllPath(assetManager, folderName, listener);
+
+        listener.onProgressChanged(20);
+
+        int i = 0;
+        int size = paths.size();
 
         for (String path : paths) {
+            listener.onProgressChanged(20 + (i * 80 / size));
+            i++;
             copyAssetFileToTarget(assetManager, gameFolder, path);
         }
 
-        onFinish.run();
+        listener.onFinish();
     }
 
-    private static ArrayList<String> fetchAllPath(AssetManager assetManager, String res) {
+    private static ArrayList<String> fetchAllPath(AssetManager assetManager, String res, onCopyListener listener) {
         String[] files = new String[0];
         ArrayList<String> resources = new ArrayList<>();
 
@@ -40,15 +58,17 @@ public class GameResourceUtil {
 
         if (files.length > 0) {
             for (String file : files) {
-                resources.addAll(fetchAllPath(assetManager, res + File.separator + file));
+                resources.addAll(fetchAllPath(assetManager, res + File.separator + file, listener));
             }
         } else {
             resources.add(res);
+            listener.onSizeIncrease();
         }
 
         return resources;
     }
-    private static void copyAssetFileToTarget(AssetManager assetManager, String gameFolder, String file) {
+    private static void copyAssetFileToTarget(AssetManager assetManager, String gameFolder,
+            String file) {
         try {
             File outFile = new File(gameFolder + File.separator + file);
 

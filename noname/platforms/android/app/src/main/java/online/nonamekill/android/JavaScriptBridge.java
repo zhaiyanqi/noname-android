@@ -6,6 +6,8 @@ import android.webkit.JavascriptInterface;
 
 import java.io.File;
 
+import online.nonamekill.common.Constant;
+
 public class JavaScriptBridge {
     public static final String TAG = "JavaScriptBridge";
     public static final String JS_PARAMS = "jsBridge";
@@ -22,11 +24,9 @@ public class JavaScriptBridge {
         File rootFiles = null;
 
         if (null != mContext) {
-            rootFiles = mContext.getExternalFilesDir(null);
+            rootFiles = mContext.getExternalFilesDir(Constant.GAME_FOLDER);
         }
 
-//        return Uri.fromFile(rootFiles).toString() + File.separator;
-        return null;
+        return Uri.fromFile(rootFiles).toString() + File.separator;
     }
-
 }

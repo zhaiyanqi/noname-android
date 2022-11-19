@@ -299,9 +299,7 @@ dependencies {
 
     // module
     implementation project(":lib_common")
-
-    // https://github.com/daimajia/NumberProgressBar
-    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+    implementation project(":module_auto_import")
 }
 
 def addSigningProps(propsFilePath, signingConfig) {

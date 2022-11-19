@@ -20,6 +20,8 @@
 package online.nonamekill.android;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -29,9 +31,8 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.animation.PathInterpolator;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -39,14 +40,23 @@ import androidx.annotation.Nullable;
 
 import org.apache.cordova.*;
 
-import online.nonamekill.common.GameResourceUtil;
+import java.util.ArrayList;
 
-public class MainActivity extends CordovaActivity {
+import online.nonamekill.common.function.BaseModule;
+import online.nonamekill.common.function.ModuleListener;
+import online.nonamekill.common.util.GameResourceUtil;
+import online.nonamekill.common.util.ThreadUtil;
+import online.nonemekill.autoimport.ModuleAutoImport;
+
+public class MainActivity extends CordovaActivity implements ModuleListener {
 
     private static final int REQUEST_MANAGER_PERMISSION = 100;
 
+    private final ArrayList<BaseModule> mModules = new ArrayList<>();
+
     // view
     private RelativeLayout mRootView = null;
+    private RelativeLayout mMainContainer = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +70,42 @@ public class MainActivity extends CordovaActivity {
 
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
+        onCreateInternal();
+    }
+
+    @Override
+    public void loadUrl(String url) {
+        if (appView == null) {
+            init();
+        }
+
+        // If keepRunning
+        this.keepRunning = preferences.getBoolean("KeepRunning", true);
+    }
+
+    private void onCreateInternal() {
+        for (BaseModule module : mModules) {
+            module.onCreate(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+
+        for (BaseModule module : mModules) {
+            module.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        for (BaseModule module : mModules) {
+            module.onResume();
+        }
     }
 
     @Override
@@ -81,53 +127,52 @@ public class MainActivity extends CordovaActivity {
 
         checkPermissions();
 
+        initModules();
         initContainer();
     }
 
     private void initContainer() {
-        RelativeLayout mainContainer = new RelativeLayout(this);
-        mainContainer.setBackgroundColor(Color.RED);
-        mRootView.addView(mainContainer, new RelativeLayout.LayoutParams(400, 400));
+        mMainContainer = new RelativeLayout(this);
+        mRootView.addView(mMainContainer, new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT));
 
-        mainContainer.setOnClickListener(v -> MyApplication.getThreadPool().execute(() -> {
-            GameResourceUtil.copyAssetToGameFolder(MainActivity.this, "res", new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(() -> {
-                        Toast.makeText(MainActivity.this, "finish", Toast.LENGTH_SHORT).show();
-                    });
-                }
-            });
-        }));
+        for (BaseModule module : mModules) {
+            View view = module.getView(this);
+
+            if (null != view) {
+                mMainContainer.addView(view);
+            }
+        }
+    }
+
+    private void initModules() {
+        bindModule(new ModuleAutoImport());
+    }
+
+    private void bindModule(BaseModule module) {
+        module.setListener(this);
+        mModules.add(module);
     }
 
     public void checkPermissions() {
-//        requestManagerPermission();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
         }
     }
 
-    private void requestManagerPermission() {
-        //当系统在11及以上
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // 没文件管理权限时申请权限
-            if (!Environment.isExternalStorageManager()) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, REQUEST_MANAGER_PERMISSION);
-            }
-        }
-    }
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_MANAGER_PERMISSION && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                requestManagerPermission();
-            }
-        }
+    public void onAutoImportFinished() {
+        runOnUiThread(() -> {
+            appView.loadUrlIntoView(launchUrl, true);
+            mMainContainer.animate().alpha(0)
+                    .setDuration(250)
+                    .setInterpolator(new PathInterpolator(0.33f, 0, 0.67f, 1f))
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            mMainContainer.setVisibility(View.GONE);
+                        }
+                    }).start();
+        });
     }
 }
