@@ -19,3 +19,4 @@ out
 gradle-app.setting
 # Android Studio
 .idea
+/app/src/main/assets/res/
