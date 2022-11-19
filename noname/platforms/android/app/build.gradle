@@ -296,6 +296,12 @@ dependencies {
     implementation(project(path: ":CordovaLib"))
     implementation "androidx.webkit:webkit:1.4.0"
     // SUB-PROJECT DEPENDENCIES END
+
+    // module
+    implementation project(":lib_common")
+
+    // https://github.com/daimajia/NumberProgressBar
+    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
 }
 
 def addSigningProps(propsFilePath, signingConfig) {

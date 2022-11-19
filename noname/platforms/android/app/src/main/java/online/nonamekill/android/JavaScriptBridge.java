@@ -25,7 +25,8 @@ public class JavaScriptBridge {
             rootFiles = mContext.getExternalFilesDir(null);
         }
 
-        return Uri.fromFile(rootFiles).toString() + File.separator;
+//        return Uri.fromFile(rootFiles).toString() + File.separator;
+        return null;
     }
 
 }

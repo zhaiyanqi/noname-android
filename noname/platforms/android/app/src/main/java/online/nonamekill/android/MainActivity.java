@@ -33,10 +33,13 @@ import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import org.apache.cordova.*;
+
+import online.nonamekill.common.GameResourceUtil;
 
 public class MainActivity extends CordovaActivity {
 
@@ -77,6 +80,25 @@ public class MainActivity extends CordovaActivity {
         view.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
 
         checkPermissions();
+
+        initContainer();
+    }
+
+    private void initContainer() {
+        RelativeLayout mainContainer = new RelativeLayout(this);
+        mainContainer.setBackgroundColor(Color.RED);
+        mRootView.addView(mainContainer, new RelativeLayout.LayoutParams(400, 400));
+
+        mainContainer.setOnClickListener(v -> MyApplication.getThreadPool().execute(() -> {
+            GameResourceUtil.copyAssetToGameFolder(MainActivity.this, "res", new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this, "finish", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
+        }));
     }
 
     public void checkPermissions() {
