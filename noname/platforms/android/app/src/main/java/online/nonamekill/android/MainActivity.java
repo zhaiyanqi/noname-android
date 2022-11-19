@@ -19,14 +19,24 @@
 
 package online.nonamekill.android;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.webkit.WebView;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+
 import org.apache.cordova.*;
 
-public class MainActivity extends CordovaActivity
-{
+public class MainActivity extends CordovaActivity {
+
+    // view
+    private RelativeLayout mRootView = null;
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // enable Cordova apps to be started in the background
@@ -37,5 +47,23 @@ public class MainActivity extends CordovaActivity
 
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
+    }
+
+    @Override
+    protected void createViews() {
+        WebView view = (WebView) appView.getView();
+        view.setLayoutParams(new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+
+        setContentView(R.layout.main_layout);
+
+        mRootView = findViewById(R.id.root_view);
+        mRootView.addView(view);
+        view.setBackgroundColor(Color.BLACK);
+        view.requestFocusFromTouch();
+        view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        view.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        view.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
     }
 }
