@@ -794,9 +794,14 @@ public class FileTransfer extends CordovaPlugin {
                             byte[] buffer = new byte[MAX_BUFFER_SIZE];
                             int bytesRead = 0;
 
-                            if ((null != file) && file.isDirectory() && !file.exists()) {
+                            if ((null != file) && file.isDirectory()) {
                                 boolean mkdirs = file.mkdirs();
-                                LOG.e(LOG_TAG, "file not exits, so create one. " + file + ", mkdirs: " + mkdirs);
+                                LOG.e(LOG_TAG, "directory not exits, so create one. " + file + ", mkdirs: " + mkdirs);
+                            }
+
+                            if ((null != file) && file.isFile()) {
+                                File parentFile = file.getParentFile();
+                                parentFile.mkdirs();
                             }
 
                             outputStream = new FileOutputStream(file);

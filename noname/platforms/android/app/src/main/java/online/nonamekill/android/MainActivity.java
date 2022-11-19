@@ -19,8 +19,14 @@
 
 package online.nonamekill.android;
 
+import android.Manifest;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -28,9 +34,13 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.Nullable;
+
 import org.apache.cordova.*;
 
 public class MainActivity extends CordovaActivity {
+
+    private static final int REQUEST_MANAGER_PERMISSION = 100;
 
     // view
     private RelativeLayout mRootView = null;
@@ -65,5 +75,37 @@ public class MainActivity extends CordovaActivity {
         view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         view.setOverScrollMode(View.OVER_SCROLL_NEVER);
         view.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
+
+        checkPermissions();
+    }
+
+    public void checkPermissions() {
+//        requestManagerPermission();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+        }
+    }
+
+    private void requestManagerPermission() {
+        //当系统在11及以上
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // 没文件管理权限时申请权限
+            if (!Environment.isExternalStorageManager()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, REQUEST_MANAGER_PERMISSION);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_MANAGER_PERMISSION && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                requestManagerPermission();
+            }
+        }
     }
 }
