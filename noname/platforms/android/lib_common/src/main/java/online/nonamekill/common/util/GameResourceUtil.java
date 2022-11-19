@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+import online.nonamekill.common.Constant;
+
 public class GameResourceUtil {
     private static final String TAG = "GameResourceUtil";
 
@@ -91,5 +93,20 @@ public class GameResourceUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean checkIfGamePath(File file) {
+        if (null != file) {
+            File[] gameFolders = file.listFiles(dir -> dir.isDirectory() && Constant.GAME_FOLDER_NAME.equals(dir.getName()));
+
+            if ((null != gameFolders) && gameFolders.length == 1) {
+                File gameFolder = gameFolders[0];
+                File[] gameJs = gameFolder.listFiles(f -> f.isFile() && Constant.GAME_FILE.equals(f.getName()));
+
+                return (null != gameJs) && (gameJs.length > 0);
+            }
+        }
+
+        return false;
     }
 }

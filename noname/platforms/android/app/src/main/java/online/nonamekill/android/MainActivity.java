@@ -125,7 +125,7 @@ public class MainActivity extends CordovaActivity implements ModuleListener {
         view.setOverScrollMode(View.OVER_SCROLL_NEVER);
         view.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
 
-        checkPermissions();
+//        checkPermissions();
 
         initModules();
         initContainer();
@@ -156,7 +156,16 @@ public class MainActivity extends CordovaActivity implements ModuleListener {
 
     public void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 101) {
+
         }
     }
 

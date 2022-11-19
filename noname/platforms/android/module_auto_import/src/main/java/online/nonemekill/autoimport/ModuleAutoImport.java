@@ -26,31 +26,40 @@ public class ModuleAutoImport extends BaseModule {
         mProgressBar.setProgress(0);
 
         ThreadUtil.execute(() -> {
-            GameResourceUtil.copyAssetToGameFolder(getContext(), Constant.GAME_FOLDER, new GameResourceUtil.onCopyListener() {
-                @Override
-                public void onProgressChanged(int progress) {
-                    mProgressBar.post(() ->{
-                        int progress1 = mProgressBar.getProgress();
-                        mProgressBar.setProgress(Math.max(progress1, progress));
-                    });
-                }
+            boolean exists = GameResourceUtil.checkIfGamePath(mContext.getExternalFilesDir(Constant.GAME_FOLDER));
 
-                @Override
-                public void onSizeIncrease() {
-                    mProgressBar.post(() -> {
-                        mFetchProgress++;
-                        mProgressBar.setProgress(Math.min(mFetchProgress * 20 / 7000, 20));
-                    });
-                }
+            if (exists) {
+                mProgressBar.post(() -> {
+                    mProgressBar.setProgress(100);
+                    mListener.onAutoImportFinished();
+                });
+            } else {
+                GameResourceUtil.copyAssetToGameFolder(getContext(), Constant.GAME_FOLDER, new GameResourceUtil.onCopyListener() {
+                    @Override
+                    public void onProgressChanged(int progress) {
+                        mProgressBar.post(() ->{
+                            int progress1 = mProgressBar.getProgress();
+                            mProgressBar.setProgress(Math.max(progress1, progress));
+                        });
+                    }
 
-                @Override
-                public void onFinish() {
-                    mProgressBar.post(() -> {
-                        mProgressBar.setProgress(100);
-                        mListener.onAutoImportFinished();
-                    });
-                }
-            });
+                    @Override
+                    public void onSizeIncrease() {
+                        mProgressBar.post(() -> {
+                            mFetchProgress++;
+                            mProgressBar.setProgress(Math.min(mFetchProgress * 20 / 7000, 20));
+                        });
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        mProgressBar.post(() -> {
+                            mProgressBar.setProgress(100);
+                            mListener.onAutoImportFinished();
+                        });
+                    }
+                });
+            }
         });
     }
 
