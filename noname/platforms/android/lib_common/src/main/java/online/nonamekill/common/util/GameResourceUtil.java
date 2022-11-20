@@ -46,10 +46,9 @@ public class GameResourceUtil {
 
             ThreadUtil.execute(() -> {
                 for (int j = begin; j < end; j++) {
+                    listener.onFinish(1);
                     copyAssetFileToTarget(assetManager, gameFolder, paths.get(j));
                 }
-
-                listener.onFinish(end - begin);
             });
 
             start = start + EACH_THREAD_COUNT;

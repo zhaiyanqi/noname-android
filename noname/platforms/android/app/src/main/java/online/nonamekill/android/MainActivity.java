@@ -19,39 +19,28 @@
 
 package online.nonamekill.android;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.PathInterpolator;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleEventObserver;
+import androidx.customview.widget.ViewDragHelper;
 
 import org.apache.cordova.*;
 
-import java.util.ArrayList;
-
 import online.nonamekill.android.module.ModuleManager;
-import online.nonamekill.common.function.BaseModule;
-import online.nonamekill.common.function.ModuleListener;
 import online.nonamekill.common.util.GameResourceUtil;
-import online.nonamekill.common.util.ThreadUtil;
 import online.nonamekill.module.imp.ImportActivity;
-import online.nonemekill.autoimport.ModuleAutoImport;
 
-public class MainActivity extends CordovaActivity implements ModuleListener {
+public class MainActivity extends CordovaActivity {
     private ModuleManager mModuleManager;
 
     // view
@@ -92,6 +81,29 @@ public class MainActivity extends CordovaActivity implements ModuleListener {
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        processDoubleFingerEvent(ev);
+
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private int[] mDownX = new int[2];
+    private int[] mDownY = new int[2];
+
+    private void processDoubleFingerEvent(MotionEvent ev) {
+//        if (ev.getPointerCount() != 3) {
+//            return;
+//        }
+
+//        switch (ev.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//            case MotionEvent.ACTION_POINTER_DOWN: {
+//                setModuleContainerVisible(View.VISIBLE);
+//            }
+//        }
+    }
+
+    @Override
     protected void createViews() {
         WebView view = (WebView) appView.getView();
         view.setLayoutParams(new RelativeLayout.LayoutParams(
@@ -108,24 +120,45 @@ public class MainActivity extends CordovaActivity implements ModuleListener {
         view.setOverScrollMode(View.OVER_SCROLL_NEVER);
         view.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
 
-        mMainContainer = new RelativeLayout(this);
-        mRootView.addView(mMainContainer, new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT));
+        mMainContainer = findViewById(R.id.module_view_container);
+        mMainContainer.setZ(Integer.MAX_VALUE);
+        mMainContainer.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onAutoImportFinished() {
-        runOnUiThread(() -> {
-            appView.loadUrlIntoView(launchUrl, true);
-            mMainContainer.animate().alpha(0)
-                    .setDuration(250)
-                    .setInterpolator(new PathInterpolator(0.33f, 0, 0.67f, 1f))
+    private void setModuleContainerVisible(int visible) {
+        if (View.VISIBLE == visible) {
+            mMainContainer.setTranslationX(-mMainContainer.getWidth());
+            mMainContainer.setVisibility(View.VISIBLE);
+
+            mMainContainer.animate()
+                    .translationX(0)
+                    .setDuration(500)
+                    .setInterpolator(new PathInterpolator(0.3f, 0, 0.1f, 1f))
+                    .start();
+        } else {
+            mMainContainer.animate()
+                    .translationX(-mMainContainer.getWidth())
+                    .setDuration(500)
+                    .setInterpolator(new PathInterpolator(0.3f, 0, 0.1f, 1f))
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            mMainContainer.setVisibility(View.GONE);
+                            if (null != mMainContainer) {
+                                mMainContainer.setVisibility(View.GONE);
+                            }
                         }
                     }).start();
-        });
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+//        if ((null != mMainContainer) && (mMainContainer.getVisibility() == View.VISIBLE)) {
+//            setModuleContainerVisible(View.GONE);
+//
+//            return;
+//        }
+
+        super.onBackPressed();
     }
 }

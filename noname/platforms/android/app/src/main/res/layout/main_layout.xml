@@ -4,4 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:id="@+id/module_view_container"
+        android:layout_margin="20dp"
+        android:background="@drawable/module_view_container_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </RelativeLayout>

@@ -11,13 +11,14 @@ import android.os.Message;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 
 import online.nonamekill.common.Constant;
+import online.nonamekill.common.GameLog;
 import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.common.util.ThreadUtil;
 
 public class ImportActivity extends AppCompatActivity {
 
     private static final int MSG_UPDATE_PROGRESS = 100;
-    private static final int MSG_UPDATE_PROGRESS_DELAY = 500;
+    private static final int MSG_UPDATE_PROGRESS_DELAY = 100;
     private static final int TEMP_TASK_COUNT = 7000;
     private static final int FETCH_TASK_MAX_PERCENT = 20;
 
@@ -42,7 +43,8 @@ public class ImportActivity extends AppCompatActivity {
                     mProgressBar.setProgress(process);
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);
                 } else if (STATE_COPY == mImportState) {
-                    int process = mFinishTaskCount * 100 / mAllTaskCount;
+                    GameLog.e("zyq", "mFinishTaskCount: " + mFinishTaskCount + ", mAllTaskCount: " + mAllTaskCount);
+                    int process = FETCH_TASK_MAX_PERCENT + (mFinishTaskCount * 100 / mAllTaskCount);
                     mProgressBar.setProgress(process);
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);
                 } else if (STATE_FINISH == mImportState) {
@@ -92,6 +94,15 @@ public class ImportActivity extends AppCompatActivity {
                 }
             }
         }));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if ((STATE_COPY == mImportState) || (STATE_FETCH == mImportState)) {
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     @Override
