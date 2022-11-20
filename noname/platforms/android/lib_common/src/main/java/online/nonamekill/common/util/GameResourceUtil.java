@@ -2,14 +2,11 @@ package online.nonamekill.common.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.util.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import online.nonamekill.common.Constant;
@@ -18,34 +15,45 @@ public class GameResourceUtil {
     private static final String TAG = "GameResourceUtil";
 
     public static class onCopyListener {
-        public void onProgressChanged(int progress) {
+        public void onSingleTaskFetch() {
         }
 
-        public void onSizeIncrease() {
+        public void onFinish(int count) {
         }
 
-        public void onFinish() {
+        public void onBegin(int sum) {
+
         }
     }
+
+    private static final int EACH_THREAD_COUNT = 1500;
 
     public static void copyAssetToGameFolder(Context context, String folderName, onCopyListener listener) {
         String gameFolder = context.getExternalFilesDir(null).getAbsolutePath();
         AssetManager assetManager = context.getAssets();
 
         ArrayList<String> paths = fetchAllPath(assetManager, folderName, listener);
-
-        listener.onProgressChanged(20);
-
-        int i = 0;
         int size = paths.size();
 
-        for (String path : paths) {
-            listener.onProgressChanged(20 + (i * 80 / size));
-            i++;
-            copyAssetFileToTarget(assetManager, gameFolder, path);
-        }
+        // 多线程复制
+        int count = size / EACH_THREAD_COUNT + 1;
+        int start = 0;
+        listener.onBegin(size);
 
-        listener.onFinish();
+        for (int i = 0; i < count; i++) {
+            final int begin = start;
+            final int end = Math.min(start + EACH_THREAD_COUNT, size);
+
+            ThreadUtil.execute(() -> {
+                for (int j = begin; j < end; j++) {
+                    copyAssetFileToTarget(assetManager, gameFolder, paths.get(j));
+                }
+
+                listener.onFinish(end - begin);
+            });
+
+            start = start + EACH_THREAD_COUNT;
+        }
     }
 
     private static ArrayList<String> fetchAllPath(AssetManager assetManager, String res, onCopyListener listener) {
@@ -64,7 +72,7 @@ public class GameResourceUtil {
             }
         } else {
             resources.add(res);
-            listener.onSizeIncrease();
+            listener.onSingleTaskFetch();
         }
 
         return resources;
@@ -95,7 +103,19 @@ public class GameResourceUtil {
         }
     }
 
-    public static boolean checkIfGamePath(File file) {
+    public static boolean checkGameResource(Context context) {
+        return GameResourceUtil.checkIfGamePath(getGameFileFolder(context), null);
+    }
+
+    public static File getGameFileFolder(Context context) {
+        return context.getExternalFilesDir(Constant.GAME_FOLDER);
+    }
+
+    public interface OnCheckResult {
+        void onCheck(boolean exist);
+    }
+
+    public static boolean checkIfGamePath(File file, OnCheckResult listener) {
         if (null != file) {
             File[] gameFolders = file.listFiles(dir -> dir.isDirectory() && Constant.GAME_FOLDER_NAME.equals(dir.getName()));
 

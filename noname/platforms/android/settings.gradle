@@ -5,3 +5,4 @@ include ":CordovaLib"
 include ":app"
 include ':lib_common'
 include ':module_auto_import'
+include ':module_import'

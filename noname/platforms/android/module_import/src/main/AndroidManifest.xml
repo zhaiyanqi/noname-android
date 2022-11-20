@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="online.nonamekill.module.imp">
+
+    <application>
+        <activity
+            android:name="online.nonamekill.module.imp.ImportActivity"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+            android:exported="false"
+            android:screenOrientation="userLandscape"
+            android:theme="@style/ImportActivityTheme" />
+    </application>
+</manifest>

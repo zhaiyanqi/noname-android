@@ -26,7 +26,8 @@ public class ModuleAutoImport extends BaseModule {
         mProgressBar.setProgress(0);
 
         ThreadUtil.execute(() -> {
-            boolean exists = GameResourceUtil.checkIfGamePath(mContext.getExternalFilesDir(Constant.GAME_FOLDER));
+//            boolean exists = GameResourceUtil.checkIfGamePath(mContext.getExternalFilesDir(Constant.GAME_FOLDER));
+            boolean exists = false;
 
             if (exists) {
                 mProgressBar.post(() -> {
@@ -35,27 +36,12 @@ public class ModuleAutoImport extends BaseModule {
                 });
             } else {
                 GameResourceUtil.copyAssetToGameFolder(getContext(), Constant.GAME_FOLDER, new GameResourceUtil.onCopyListener() {
-                    @Override
-                    public void onProgressChanged(int progress) {
-                        mProgressBar.post(() ->{
-                            int progress1 = mProgressBar.getProgress();
-                            mProgressBar.setProgress(Math.max(progress1, progress));
-                        });
-                    }
 
                     @Override
-                    public void onSizeIncrease() {
+                    public void onSingleTaskFetch() {
                         mProgressBar.post(() -> {
                             mFetchProgress++;
                             mProgressBar.setProgress(Math.min(mFetchProgress * 20 / 7000, 20));
-                        });
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        mProgressBar.post(() -> {
-                            mProgressBar.setProgress(100);
-                            mListener.onAutoImportFinished();
                         });
                     }
                 });
@@ -70,13 +56,14 @@ public class ModuleAutoImport extends BaseModule {
         Resources resources = context.getResources();
 
         // todo replace with dp params.
-//        int width = resources.getDimensionPixelOffset(R.dimen.progress_bar_width);
-//        int height = resources.getDimensionPixelOffset(R.dimen.progress_bar_height);
+        int width = resources.getDimensionPixelOffset(R.dimen.progress_bar_width);
+        int height = resources.getDimensionPixelOffset(R.dimen.progress_bar_height);
+        int marginBottom = resources.getDimensionPixelOffset(R.dimen.progress_bar_height);
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(1200, 120);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(width, height);
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.bottomMargin = 300;
+        params.bottomMargin = marginBottom;
         mProgressBar.setLayoutParams(params);
 
         return mProgressBar;
