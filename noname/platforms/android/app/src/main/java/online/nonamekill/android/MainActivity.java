@@ -24,7 +24,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.GestureDetector;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +33,14 @@ import android.view.animation.PathInterpolator;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
+
+import androidx.annotation.NonNull;
 import androidx.customview.widget.ViewDragHelper;
 
 import org.apache.cordova.*;
 
 import online.nonamekill.android.module.ModuleManager;
+import online.nonamekill.android.view.SettingButton;
 import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.module.imp.ImportActivity;
 
@@ -46,6 +50,10 @@ public class MainActivity extends CordovaActivity {
     // view
     private RelativeLayout mRootView = null;
     private RelativeLayout mMainContainer = null;
+    private SettingButton mSettingButton = null;
+    private RelativeLayout.LayoutParams mSettingButtonParams = null;
+
+    private ViewDragHelper mSettingDragHelper = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,29 +89,6 @@ public class MainActivity extends CordovaActivity {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        processDoubleFingerEvent(ev);
-
-        return super.dispatchTouchEvent(ev);
-    }
-
-    private int[] mDownX = new int[2];
-    private int[] mDownY = new int[2];
-
-    private void processDoubleFingerEvent(MotionEvent ev) {
-//        if (ev.getPointerCount() != 3) {
-//            return;
-//        }
-
-//        switch (ev.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//            case MotionEvent.ACTION_POINTER_DOWN: {
-//                setModuleContainerVisible(View.VISIBLE);
-//            }
-//        }
-    }
-
-    @Override
     protected void createViews() {
         WebView view = (WebView) appView.getView();
         view.setLayoutParams(new RelativeLayout.LayoutParams(
@@ -114,6 +99,7 @@ public class MainActivity extends CordovaActivity {
 
         mRootView = findViewById(R.id.root_view);
         mRootView.addView(view);
+        mRootView.requestFocus();
         view.setBackgroundColor(Color.BLACK);
         view.requestFocusFromTouch();
         view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -123,42 +109,100 @@ public class MainActivity extends CordovaActivity {
         mMainContainer = findViewById(R.id.module_view_container);
         mMainContainer.setZ(Integer.MAX_VALUE);
         mMainContainer.setVisibility(View.GONE);
+
+        // setting button
+        mSettingButton = new SettingButton(this);
+        mSettingButton.setEnabled(true);
+        mSettingButton.setBackgroundResource(R.drawable.setting_button_background);
+        mSettingButton.setImageResource(R.drawable.ic_settings);
+        int size = getResources().getDimensionPixelSize(R.dimen.setting_button_size);
+        mSettingButtonParams = new RelativeLayout.LayoutParams(size, size);
+        mSettingButtonParams.topMargin = getResources().getDimensionPixelSize(R.dimen.setting_button_margin_top);
+        mSettingButtonParams.leftMargin = getResources().getDimensionPixelSize(R.dimen.setting_button_margin_left);
+        mSettingButton.setLayoutParams(mSettingButtonParams);
+        mRootView.addView(mSettingButton);
+
+        mSettingButton.setOnClickListener(v -> setModuleContainerVisible(View.VISIBLE));
+
+        mSettingDragHelper = ViewDragHelper.create(mRootView, new SettingDragCallback());
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+
+        mSettingDragHelper.processTouchEvent(ev);
+
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private class SettingDragCallback extends ViewDragHelper.Callback {
+
+        @Override
+        public boolean tryCaptureView(@NonNull View child, int pointerId) {
+            return (child == mSettingButton);
+        }
+
+        @Override
+        public int clampViewPositionHorizontal(@NonNull View child, int left, int dx) {
+            return left;
+        }
+
+        @Override
+        public int clampViewPositionVertical(@NonNull View child, int top, int dy) {
+            return top;
+        }
+
+        @Override
+        public void onViewPositionChanged(@NonNull View changedView, int left, int top, int dx, int dy) {
+            super.onViewPositionChanged(changedView, left, top, dx, dy);
+
+            mSettingButtonParams.leftMargin = left;
+            mSettingButtonParams.topMargin = top;
+            changedView.setLayoutParams(mSettingButtonParams);
+        }
     }
 
     private void setModuleContainerVisible(int visible) {
         if (View.VISIBLE == visible) {
-            mMainContainer.setTranslationX(-mMainContainer.getWidth());
             mMainContainer.setVisibility(View.VISIBLE);
-
-            mMainContainer.animate()
-                    .translationX(0)
-                    .setDuration(500)
-                    .setInterpolator(new PathInterpolator(0.3f, 0, 0.1f, 1f))
-                    .start();
+            mMainContainer.clearAnimation();
+            mMainContainer.setAlpha(0f);
+            mMainContainer.setScaleX(0.1f);
+            mMainContainer.setScaleY(0.1f);
+            mMainContainer.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mSettingButton.setEnabled(false);
+                }
+            }).start();
         } else {
+            mMainContainer.clearAnimation();
             mMainContainer.animate()
-                    .translationX(-mMainContainer.getWidth())
-                    .setDuration(500)
-                    .setInterpolator(new PathInterpolator(0.3f, 0, 0.1f, 1f))
+                    .scaleX(0.1f)
+                    .scaleY(0.1f)
+                    .alpha(0f)
+                    .setDuration(250)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            if (null != mMainContainer) {
-                                mMainContainer.setVisibility(View.GONE);
-                            }
+                            mSettingButton.setEnabled(true);
                         }
-                    }).start();
+                    })
+                    .start();
         }
     }
 
-    @Override
-    public void onBackPressed() {
-//        if ((null != mMainContainer) && (mMainContainer.getVisibility() == View.VISIBLE)) {
-//            setModuleContainerVisible(View.GONE);
-//
-//            return;
-//        }
 
-        super.onBackPressed();
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK)
+                && (null != mMainContainer)
+                && (mMainContainer.getVisibility() == View.VISIBLE)) {
+            setModuleContainerVisible(View.GONE);
+
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 }
