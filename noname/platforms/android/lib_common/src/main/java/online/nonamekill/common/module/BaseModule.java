@@ -1,15 +1,10 @@
-package online.nonamekill.common.function;
+package online.nonamekill.common.module;
 
 import android.content.Context;
 import android.view.View;
 
 public class BaseModule {
     protected Context mContext = null;
-    protected ModuleListener mListener = null;
-
-    public void setListener(ModuleListener listener) {
-        mListener = listener;
-    }
 
     public void onCreate(Context context) {
         mContext = context;

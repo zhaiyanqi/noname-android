@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import online.nonamekill.common.data.DataManager;
 import online.nonamekill.common.util.ThreadUtil;
 
 public class MyApplication extends Application {
@@ -14,6 +15,8 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        DataManager.getInstance().initialize(this);
         ThreadUtil.init();
     }
 }

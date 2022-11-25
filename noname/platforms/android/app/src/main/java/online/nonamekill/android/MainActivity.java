@@ -21,6 +21,7 @@ package online.nonamekill.android;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -39,26 +40,26 @@ import androidx.customview.widget.ViewDragHelper;
 
 import org.apache.cordova.*;
 
+import online.nonamekill.android.container.ContainerUIManager;
 import online.nonamekill.android.module.ModuleManager;
+import online.nonamekill.android.view.CloseButton;
 import online.nonamekill.android.view.SettingButton;
+import online.nonamekill.common.data.DataKey;
+import online.nonamekill.common.data.DataManager;
 import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.module.imp.ImportActivity;
 
 public class MainActivity extends CordovaActivity {
     private ModuleManager mModuleManager;
 
-    // view
-    private RelativeLayout mRootView = null;
-    private RelativeLayout mMainContainer = null;
-    private SettingButton mSettingButton = null;
-    private RelativeLayout.LayoutParams mSettingButtonParams = null;
-
-    private ViewDragHelper mSettingDragHelper = null;
+    private ContainerUIManager mContainerUIManager = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mModuleManager = new ModuleManager(this);
+
+        mContainerUIManager = new ContainerUIManager(this);
     }
 
     @Override
@@ -90,116 +91,35 @@ public class MainActivity extends CordovaActivity {
 
     @Override
     protected void createViews() {
+        setContentView(R.layout.main_layout);
+        RelativeLayout rootView = findViewById(R.id.root_view);
+
         WebView view = (WebView) appView.getView();
         view.setLayoutParams(new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-
-        setContentView(R.layout.main_layout);
-
-        mRootView = findViewById(R.id.root_view);
-        mRootView.addView(view);
-        mRootView.requestFocus();
         view.setBackgroundColor(Color.BLACK);
         view.requestFocusFromTouch();
         view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         view.setOverScrollMode(View.OVER_SCROLL_NEVER);
         view.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
 
-        mMainContainer = findViewById(R.id.module_view_container);
-        mMainContainer.setZ(Integer.MAX_VALUE);
-        mMainContainer.setVisibility(View.GONE);
-
-        // setting button
-        mSettingButton = new SettingButton(this);
-        mSettingButton.setEnabled(true);
-        mSettingButton.setBackgroundResource(R.drawable.setting_button_background);
-        mSettingButton.setImageResource(R.drawable.ic_settings);
-        int size = getResources().getDimensionPixelSize(R.dimen.setting_button_size);
-        mSettingButtonParams = new RelativeLayout.LayoutParams(size, size);
-        mSettingButtonParams.topMargin = getResources().getDimensionPixelSize(R.dimen.setting_button_margin_top);
-        mSettingButtonParams.leftMargin = getResources().getDimensionPixelSize(R.dimen.setting_button_margin_left);
-        mSettingButton.setLayoutParams(mSettingButtonParams);
-        mRootView.addView(mSettingButton);
-
-        mSettingButton.setOnClickListener(v -> setModuleContainerVisible(View.VISIBLE));
-
-        mSettingDragHelper = ViewDragHelper.create(mRootView, new SettingDragCallback());
+        rootView.addView(view);
+        mContainerUIManager.onCreate();
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-
-        mSettingDragHelper.processTouchEvent(ev);
+        if ((null != mContainerUIManager) && mContainerUIManager.dispatchTouchEvent(ev)) {
+            return true;
+        }
 
         return super.dispatchTouchEvent(ev);
     }
 
-    private class SettingDragCallback extends ViewDragHelper.Callback {
-
-        @Override
-        public boolean tryCaptureView(@NonNull View child, int pointerId) {
-            return (child == mSettingButton);
-        }
-
-        @Override
-        public int clampViewPositionHorizontal(@NonNull View child, int left, int dx) {
-            return left;
-        }
-
-        @Override
-        public int clampViewPositionVertical(@NonNull View child, int top, int dy) {
-            return top;
-        }
-
-        @Override
-        public void onViewPositionChanged(@NonNull View changedView, int left, int top, int dx, int dy) {
-            super.onViewPositionChanged(changedView, left, top, dx, dy);
-
-            mSettingButtonParams.leftMargin = left;
-            mSettingButtonParams.topMargin = top;
-            changedView.setLayoutParams(mSettingButtonParams);
-        }
-    }
-
-    private void setModuleContainerVisible(int visible) {
-        if (View.VISIBLE == visible) {
-            mMainContainer.setVisibility(View.VISIBLE);
-            mMainContainer.clearAnimation();
-            mMainContainer.setAlpha(0f);
-            mMainContainer.setScaleX(0.1f);
-            mMainContainer.setScaleY(0.1f);
-            mMainContainer.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(250).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mSettingButton.setEnabled(false);
-                }
-            }).start();
-        } else {
-            mMainContainer.clearAnimation();
-            mMainContainer.animate()
-                    .scaleX(0.1f)
-                    .scaleY(0.1f)
-                    .alpha(0f)
-                    .setDuration(250)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            mSettingButton.setEnabled(true);
-                        }
-                    })
-                    .start();
-        }
-    }
-
-
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK)
-                && (null != mMainContainer)
-                && (mMainContainer.getVisibility() == View.VISIBLE)) {
-            setModuleContainerVisible(View.GONE);
-
+        if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK) && mContainerUIManager.onBackPressed()) {
             return true;
         }
 

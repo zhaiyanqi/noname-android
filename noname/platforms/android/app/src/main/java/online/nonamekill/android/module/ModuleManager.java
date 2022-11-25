@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import java.util.ArrayList;
 
-import online.nonamekill.common.function.BaseModule;
+import online.nonamekill.common.module.BaseModule;
 
 public class ModuleManager {
     private final ArrayList<BaseModule> mModules = new ArrayList<>();

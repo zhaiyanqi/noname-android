@@ -6,9 +6,24 @@
 
     <RelativeLayout
         android:id="@+id/module_view_container"
-        android:layout_margin="20dp"
-        android:background="@drawable/module_view_container_background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/module_view_container_background">
+
+        <online.nonamekill.android.view.CloseButton
+            android:id="@+id/module_container_close_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_close_module_container"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:translationZ="100dp" />
+    </RelativeLayout>
 
 </RelativeLayout>
