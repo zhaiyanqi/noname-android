@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'online.nonamekill.android.assets'
+    namespace 'online.nonamekill.assets'
     compileSdkVersion 32
 
     defaultConfig {
-        applicationId "online.nonamekill.android.assets"
+        applicationId "online.nonamekill.assets"
         minSdkVersion 22
         targetSdkVersion 32
         versionCode 1

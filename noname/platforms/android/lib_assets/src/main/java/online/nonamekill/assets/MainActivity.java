@@ -1,4 +1,4 @@
-package online.nonamekill.android.assets;
+package online.nonamekill.assets;
 
 import androidx.appcompat.app.AppCompatActivity;
 

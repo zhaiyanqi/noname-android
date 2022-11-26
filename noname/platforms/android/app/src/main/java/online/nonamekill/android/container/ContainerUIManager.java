@@ -63,12 +63,12 @@ public class ContainerUIManager {
 
         CloseButton closeButton = mActivity.findViewById(R.id.module_container_close_button);
         closeButton.setOnClickListener(v -> {
-            PackageManager pm = mActivity.getPackageManager();
-            pm.setComponentEnabledSetting(mActivity.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
-            pm.setComponentEnabledSetting(new ComponentName(mActivity,
-                    "online.nonamekill.android.module.icon.test1"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP);
+//            PackageManager pm = mActivity.getPackageManager();
+//            pm.setComponentEnabledSetting(mActivity.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//                    PackageManager.DONT_KILL_APP);
+//            pm.setComponentEnabledSetting(new ComponentName(mActivity,
+//                    "online.nonamekill.android.module.icon.test1"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+//                    PackageManager.DONT_KILL_APP);
 
             setModuleContainerVisible(View.INVISIBLE);
         });
@@ -94,13 +94,15 @@ public class ContainerUIManager {
     }
 
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        mSettingDragHelper.processTouchEvent(ev);
+        if (null != mSettingDragHelper) {
+            mSettingDragHelper.processTouchEvent(ev);
+        }
 
         return false;
     }
 
     public boolean onBackPressed() {
-        if (mMainContainer.isShown()) {
+        if ((null != mMainContainer) && mMainContainer.isShown()) {
             setModuleContainerVisible(View.INVISIBLE);
 
             return true;

@@ -1,6 +1,7 @@
 package online.nonamekill.common.util;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 
 import java.io.File;
@@ -8,11 +9,36 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import online.nonamekill.common.Constant;
 
 public class GameResourceUtil {
     private static final String TAG = "GameResourceUtil";
+
+    public static boolean checkAssetContext(Context context) {
+        try {
+            Context assetContext = context.createPackageContext(Constant.ASSET_PACKAGE_NAME, Context.CONTEXT_IGNORE_SECURITY);
+
+            if (null == assetContext) {
+                return false;
+            }
+
+            AssetManager assets = assetContext.getAssets();
+
+            if (null == assets) {
+                return false;
+            }
+
+            String[] list = assets.list(Constant.GAME_FOLDER);
+
+            return (null != list) && (list.length != 0);
+        } catch (PackageManager.NameNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 
     public static class onCopyListener {
         public void onSingleTaskFetch() {
@@ -28,9 +54,9 @@ public class GameResourceUtil {
 
     private static final int EACH_THREAD_COUNT = 1500;
 
-    public static void copyAssetToGameFolder(Context context, String folderName, onCopyListener listener) {
+    public static void copyAssetToGameFolder(Context context, Context assetContext, String folderName, onCopyListener listener) {
         String gameFolder = context.getExternalFilesDir(null).getAbsolutePath();
-        AssetManager assetManager = context.getAssets();
+        AssetManager assetManager = assetContext.getAssets();
 
         ArrayList<String> paths = fetchAllPath(assetManager, folderName, listener);
         int size = paths.size();

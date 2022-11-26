@@ -19,7 +19,9 @@
 
 package online.nonamekill.android;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -31,7 +33,12 @@ import android.widget.RelativeLayout;
 
 import org.apache.cordova.*;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+
 import online.nonamekill.android.container.ContainerUIManager;
+import online.nonamekill.common.Constant;
 import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.module.imp.ImportActivity;
 
@@ -42,8 +49,8 @@ public class MainActivity extends CordovaActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mContainerUIManager = new ContainerUIManager(this);
+        init();
     }
 
     @Override
@@ -56,10 +63,12 @@ public class MainActivity extends CordovaActivity {
         if (GameResourceUtil.checkGameResource(this)) {
             loadUrl(launchUrl);
         } else {
-            Intent intent = new Intent();
-            intent.setClass(this, ImportActivity.class);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
+            if (GameResourceUtil.checkAssetContext(this)) {
+                Intent intent = new Intent();
+                intent.setClass(this, ImportActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
         }
 
         super.onResume();

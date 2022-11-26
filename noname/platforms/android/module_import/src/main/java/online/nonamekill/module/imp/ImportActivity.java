@@ -3,11 +3,14 @@ package online.nonamekill.module.imp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 
@@ -69,34 +72,38 @@ public class ImportActivity extends AppCompatActivity {
 
         mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);
 
-//        createPackageContext("", )
+        try {
+            Context packageContext = createPackageContext("online.nonamekill.assets", CONTEXT_IGNORE_SECURITY);
 
-        ThreadUtil.execute(() -> GameResourceUtil.copyAssetToGameFolder(this, Constant.GAME_FOLDER, new GameResourceUtil.onCopyListener() {
-            @Override
-            public void onBegin(int sum) {
-                synchronized (mCountLock) {
-                    mAllTaskCount = sum;
-                    mFinishTaskCount = 0;
-                    mImportState = STATE_COPY;
-                }
-            }
-
-            @Override
-            public void onSingleTaskFetch() {
-                mFetchCount++;
-            }
-
-            @Override
-            public void onFinish(int count) {
-                synchronized (mCountLock) {
-                    mFinishTaskCount += count;
-
-                    if (mFinishTaskCount >= mAllTaskCount) {
-                        mImportState = STATE_FINISH;
+            ThreadUtil.execute(() -> GameResourceUtil.copyAssetToGameFolder(this, packageContext, Constant.GAME_FOLDER, new GameResourceUtil.onCopyListener() {
+                @Override
+                public void onBegin(int sum) {
+                    synchronized (mCountLock) {
+                        mAllTaskCount = sum;
+                        mFinishTaskCount = 0;
+                        mImportState = STATE_COPY;
                     }
                 }
-            }
-        }));
+
+                @Override
+                public void onSingleTaskFetch() {
+                    mFetchCount++;
+                }
+
+                @Override
+                public void onFinish(int count) {
+                    synchronized (mCountLock) {
+                        mFinishTaskCount += count;
+
+                        if (mFinishTaskCount >= mAllTaskCount) {
+                            mImportState = STATE_FINISH;
+                        }
+                    }
+                }
+            }));
+        } catch (PackageManager.NameNotFoundException e) {
+            mImportState = STATE_FINISH;
+        }
     }
 
     @Override
