@@ -51,10 +51,10 @@
         </activity>
 
         <activity-alias
-            android:name="online.nonamekill.android.module.icon.test1"
+            android:name="online.nonamekill.android.module.icon.fangtian"
             android:enabled="false"
             android:exported="true"
-            android:icon="@drawable/ic_close_module_container"
+            android:icon="@drawable/icon_noname_fantian"
             android:label="@string/activity_name"
             android:targetActivity=".MainActivity">
 
