@@ -19,45 +19,29 @@
 
 package online.nonamekill.android;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.PathInterpolator;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
-
-
-import androidx.annotation.NonNull;
-import androidx.customview.widget.ViewDragHelper;
 
 import org.apache.cordova.*;
 
 import online.nonamekill.android.container.ContainerUIManager;
-import online.nonamekill.android.module.ModuleManager;
-import online.nonamekill.android.view.CloseButton;
-import online.nonamekill.android.view.SettingButton;
-import online.nonamekill.common.data.DataKey;
-import online.nonamekill.common.data.DataManager;
 import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.module.imp.ImportActivity;
 
 public class MainActivity extends CordovaActivity {
-    private ModuleManager mModuleManager;
 
     private ContainerUIManager mContainerUIManager = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mModuleManager = new ModuleManager(this);
 
         mContainerUIManager = new ContainerUIManager(this);
     }
@@ -65,20 +49,12 @@ public class MainActivity extends CordovaActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        if (null != mModuleManager) {
-            mModuleManager.onPause();
-        }
     }
 
     @Override
     protected void onResume() {
         if (GameResourceUtil.checkGameResource(this)) {
             loadUrl(launchUrl);
-
-            if (null != mModuleManager) {
-                mModuleManager.onResume();
-            }
         } else {
             Intent intent = new Intent();
             intent.setClass(this, ImportActivity.class);

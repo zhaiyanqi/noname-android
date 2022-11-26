@@ -4,13 +4,17 @@ import android.content.Context;
 import android.view.View;
 
 public class BaseModule {
-    protected Context mContext = null;
+    private Context mContext = null;
 
     public void onCreate(Context context) {
         mContext = context;
     }
 
-    public Context getContext() {
+    public void onPreCreate() {
+
+    }
+
+    protected Context getContext() {
         return mContext;
     }
 
@@ -24,5 +28,9 @@ public class BaseModule {
 
     public void onResume() {
 
+    }
+
+    public String getName() {
+        return null;
     }
 }

@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.customview.widget.ViewDragHelper;
 
 import online.nonamekill.android.R;
+import online.nonamekill.android.module.ModuleManager;
 import online.nonamekill.android.view.CloseButton;
 import online.nonamekill.android.view.SettingButton;
 import online.nonamekill.common.data.DataKey;
@@ -20,7 +23,11 @@ import online.nonamekill.common.data.DataManager;
 
 public class ContainerUIManager {
 
-    private Activity mActivity = null;
+    @NonNull
+    private final Activity mActivity;
+
+    @NonNull
+    private final ModuleManager mModuleManager;
 
     private RelativeLayout mMainContainer = null;
     private SettingButton mSettingButton = null;
@@ -30,30 +37,41 @@ public class ContainerUIManager {
 
     public ContainerUIManager(Activity activity) {
         mActivity = activity;
+
+        mModuleManager = new ModuleManager(activity);
     }
 
     public void onCreate() {
+        mModuleManager.onCreate();
+
         initContainerView();
         initModuleRecyclerView();
     }
 
     private void initModuleRecyclerView() {
+//        RecyclerView recyclerView = new RecyclerView(mActivity);
 
+//        ModuleListAdapter adapter = new ModuleListAdapter(mModuleManager.getModeNameList());
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void initContainerView() {
-        if (null == mActivity) {
-            return;
-        }
-
         mMainContainer = mActivity.findViewById(R.id.module_view_container);
         mMainContainer.setZ(Integer.MAX_VALUE);
         mMainContainer.setVisibility(View.INVISIBLE);
         mMainContainer.setOnTouchListener((v, event) -> true);
 
         CloseButton closeButton = mActivity.findViewById(R.id.module_container_close_button);
-        closeButton.setOnClickListener(v -> setModuleContainerVisible(View.INVISIBLE));
+        closeButton.setOnClickListener(v -> {
+            PackageManager pm = mActivity.getPackageManager();
+            pm.setComponentEnabledSetting(mActivity.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+            pm.setComponentEnabledSetting(new ComponentName(mActivity,
+                    "online.nonamekill.android.module.icon.test1"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+
+            setModuleContainerVisible(View.INVISIBLE);
+        });
 
         // setting button
         mSettingButton = new SettingButton(mActivity);

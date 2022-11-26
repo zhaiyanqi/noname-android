@@ -24,6 +24,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- add for dynamic icon -->
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+
     <application
         android:name=".MyApplication"
         android:hardwareAccelerated="true"
@@ -45,5 +48,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity-alias
+            android:name="online.nonamekill.android.module.icon.test1"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/ic_close_module_container"
+            android:label="@string/activity_name"
+            android:targetActivity=".MainActivity">
+
+            <intent-filter android:label="@string/launcher_name">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
     </application>
 </manifest>
