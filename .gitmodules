@@ -1,0 +1,3 @@
+[submodule "noname/platforms/android/lib_assets/src/main/assets/resources"]
+	path = noname/platforms/android/lib_assets/src/main/assets/resources
+	url = https://github.com/libccy/noname.git

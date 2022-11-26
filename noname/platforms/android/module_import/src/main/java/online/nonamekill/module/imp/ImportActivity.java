@@ -69,6 +69,8 @@ public class ImportActivity extends AppCompatActivity {
 
         mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);
 
+//        createPackageContext("", )
+
         ThreadUtil.execute(() -> GameResourceUtil.copyAssetToGameFolder(this, Constant.GAME_FOLDER, new GameResourceUtil.onCopyListener() {
             @Override
             public void onBegin(int sum) {
