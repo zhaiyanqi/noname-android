@@ -19,4 +19,7 @@
 ext.repos = {
     google()
     mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://mapbox.bintray.com/mapbox' }
+    maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
 }

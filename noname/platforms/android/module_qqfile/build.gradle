@@ -35,5 +35,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
+    // 弹窗工具
+    implementation 'com.github.li-xiaojun:XPopup:2.7.0'
+    // fastjson
+    implementation 'com.alibaba:fastjson:1.1.72.android'
+
+
     implementation project(":lib_common")
 }
