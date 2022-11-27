@@ -17,6 +17,48 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+
+        <activity-alias
+            android:name="online.nonamekill.android.module.icon.fangtian"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/icon_noname_fantian"
+            android:label="@string/activity_name"
+            android:targetActivity="online.nonamekill.android.MainActivity">
+
+            <intent-filter android:label="@string/launcher_name">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="online.nonamekill.android.module.icon.version1"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/icon_noname_version1"
+            android:label="@string/activity_name"
+            android:targetActivity="online.nonamekill.android.MainActivity">
+
+            <intent-filter android:label="@string/launcher_name">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="online.nonamekill.android.module.icon.version2"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/icon_noname_version2"
+            android:label="@string/activity_name"
+            android:targetActivity="online.nonamekill.android.MainActivity">
+
+            <intent-filter android:label="@string/launcher_name">
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
     </application>
 
 </manifest>

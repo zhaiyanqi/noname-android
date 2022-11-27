@@ -302,6 +302,7 @@ dependencies {
     implementation project(":lib_common")
     implementation project(":module_import")
     implementation project(":module_icon")
+    implementation project(":module_about")
 }
 
 def addSigningProps(propsFilePath, signingConfig) {

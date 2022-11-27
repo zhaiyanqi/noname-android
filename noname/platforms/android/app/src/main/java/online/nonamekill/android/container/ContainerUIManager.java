@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -176,7 +177,9 @@ public class ContainerUIManager {
                     View view = target.getView(mActivity);
 
                     if (null != view) {
-                        mMainContainer.addView(view);
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT);
+                        mMainContainer.addView(view, params);
                     }
 
                     mShowModuleViewAnimator.start();

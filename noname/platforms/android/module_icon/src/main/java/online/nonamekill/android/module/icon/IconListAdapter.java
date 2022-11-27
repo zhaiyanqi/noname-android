@@ -30,15 +30,6 @@ public class IconListAdapter extends RecyclerView.Adapter<IconListAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.module_icon_item, null);
-
-        view.setOutlineProvider(new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View view, Outline outline) {
-                outline.set
-            }
-        });
-
-
         return new ViewHolder(view);
     }
 

@@ -5,6 +5,7 @@ import android.app.Activity;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import online.nonamekill.android.module.about.ModuleAbout;
 import online.nonamekill.android.module.icon.ModuleIcon;
 import online.nonamekill.common.module.BaseModule;
 
@@ -16,6 +17,7 @@ public class ModuleManager {
     public ModuleManager(Activity activity) {
         mActivity = activity;
         mModules.add(new ModuleIcon());
+        mModules.add(new ModuleAbout());
     }
 
     public void onPause() {
@@ -79,5 +81,9 @@ public class ModuleManager {
 
     public void doChange(BaseModule module) {
         mCurrentModule = module;
+    }
+
+    public BaseModule getFirstModule() {
+        return mModules.get(0);
     }
 }

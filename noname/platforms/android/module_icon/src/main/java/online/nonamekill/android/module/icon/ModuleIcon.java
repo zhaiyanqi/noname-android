@@ -31,6 +31,8 @@ public class ModuleIcon extends BaseModule {
         ArrayList<IconInfo> list = new ArrayList<>();
         list.add(new IconInfo(R.drawable.icon_noname_zhangba, "online.nonamekill.android.module.icon.zhangba"));
         list.add(new IconInfo(R.drawable.icon_noname_fantian, "online.nonamekill.android.module.icon.fangtian"));
+        list.add(new IconInfo(R.drawable.icon_noname_version1, "online.nonamekill.android.module.icon.version1"));
+        list.add(new IconInfo(R.drawable.icon_noname_version2, "online.nonamekill.android.module.icon.version2"));
         IconListAdapter adapter = new IconListAdapter(list, info -> {
             PackageManager pm = getActivity().getPackageManager();
             pm.setComponentEnabledSetting(getActivity().getComponentName(),
