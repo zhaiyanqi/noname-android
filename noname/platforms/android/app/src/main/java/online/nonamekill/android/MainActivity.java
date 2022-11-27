@@ -52,6 +52,7 @@ public class MainActivity extends CordovaActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContainerUIManager = new ContainerUIManager(this);
+        init();
 
         if (GameResourceUtil.checkGameResource(this)) {
             loadUrl(launchUrl);
