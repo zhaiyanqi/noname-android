@@ -76,7 +76,8 @@ android {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:${cordovaConfig.ANDROIDX_APP_COMPAT_VERSION}"
+    implementation "androidx.appcompat:appcompat:$versionAppCompat"
+    implementation "com.google.android.material:material:$versionMaterial"
     implementation "androidx.webkit:webkit:${cordovaConfig.ANDROIDX_WEBKIT_VERSION}"
 }
 

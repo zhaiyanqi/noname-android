@@ -1,5 +1,5 @@
 // GENERATED FILE - DO NOT EDIT
-apply from: "cdv-gradle-name.gradle"
+rootProject.name = "noname"
 include ":"
 include ":CordovaLib"
 include ":app"
