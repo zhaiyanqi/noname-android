@@ -33,4 +33,8 @@ public class BaseModule {
     public String getName() {
         return null;
     }
+
+    public void onDestroy() {
+
+    }
 }

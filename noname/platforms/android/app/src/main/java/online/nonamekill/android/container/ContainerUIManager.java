@@ -2,24 +2,28 @@ package online.nonamekill.android.container;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.customview.widget.ViewDragHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import online.nonamekill.android.R;
 import online.nonamekill.android.module.ModuleManager;
 import online.nonamekill.android.view.CloseButton;
 import online.nonamekill.android.view.SettingButton;
+import online.nonamekill.common.Constant;
 import online.nonamekill.common.data.DataKey;
 import online.nonamekill.common.data.DataManager;
+import online.nonamekill.common.module.BaseModule;
 
 public class ContainerUIManager {
 
@@ -29,11 +33,19 @@ public class ContainerUIManager {
     @NonNull
     private final ModuleManager mModuleManager;
 
+    private RelativeLayout mContainerRoot = null;
     private RelativeLayout mMainContainer = null;
     private SettingButton mSettingButton = null;
     private RelativeLayout.LayoutParams mSettingButtonParams = null;
 
     private ViewDragHelper mSettingDragHelper = null;
+
+    // animator
+    private AnimatorSet mShowRootAnimator = null;
+    private AnimatorSet mHideRootAnimator = null;
+
+    private AnimatorSet mShowModuleViewAnimator = null;
+    private AnimatorSet mHideModuleViewAnimator = null;
 
     public ContainerUIManager(Activity activity) {
         mActivity = activity;
@@ -46,20 +58,142 @@ public class ContainerUIManager {
 
         initContainerView();
         initModuleRecyclerView();
+        initAnimator();
+    }
+
+    private void initAnimator() {
+        initRootViewAnimator();
+        initContainerAnimator();
+    }
+
+    private void initRootViewAnimator() {
+        mShowRootAnimator = new AnimatorSet();
+        ValueAnimator alphaIn = ValueAnimator.ofFloat(0, 1);
+        alphaIn.setDuration(Constant.Duration.Alpha);
+        alphaIn.setInterpolator(Constant.Interpolator.Alpha);
+        alphaIn.addUpdateListener(animation -> {
+            mContainerRoot.setAlpha((float) animation.getAnimatedValue());
+            mContainerRoot.invalidate();
+        });
+
+        ValueAnimator scaleIn = ValueAnimator.ofFloat(0.1f, 1);
+        scaleIn.setDuration(Constant.Duration.Scale);
+        scaleIn.setInterpolator(Constant.Interpolator.Scale);
+        scaleIn.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            mContainerRoot.setScaleY(value);
+            mContainerRoot.setScaleX(value);
+            mContainerRoot.invalidate();
+        });
+
+        mShowRootAnimator.play(alphaIn).with(scaleIn);
+
+        mHideRootAnimator = new AnimatorSet();
+        ValueAnimator alphaHide = ValueAnimator.ofFloat(1, 0);
+        alphaHide.setDuration(Constant.Duration.Alpha);
+        alphaHide.setInterpolator(Constant.Interpolator.Alpha);
+        alphaHide.addUpdateListener(animation -> {
+            mContainerRoot.setAlpha((float) animation.getAnimatedValue());
+            mContainerRoot.invalidate();
+        });
+
+        ValueAnimator scaleOut = ValueAnimator.ofFloat(1f, 0.1f);
+        scaleOut.setDuration(Constant.Duration.Scale);
+        scaleOut.setInterpolator(Constant.Interpolator.Scale);
+        scaleOut.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            mContainerRoot.setScaleY(value);
+            mContainerRoot.setScaleX(value);
+            mContainerRoot.invalidate();
+        });
+
+        mHideRootAnimator.play(alphaHide).with(scaleOut);
+    }
+
+    private void initContainerAnimator() {
+        mShowModuleViewAnimator = new AnimatorSet();
+        ValueAnimator alphaIn = ValueAnimator.ofFloat(0, 1);
+        alphaIn.setDuration(Constant.Duration.Alpha);
+        alphaIn.setInterpolator(Constant.Interpolator.Alpha);
+        alphaIn.addUpdateListener(animation -> {
+            mMainContainer.setAlpha((float) animation.getAnimatedValue());
+            mMainContainer.invalidate();
+        });
+
+        ValueAnimator scaleIn = ValueAnimator.ofFloat(0.1f, 1);
+        scaleIn.setDuration(Constant.Duration.Scale);
+        scaleIn.setInterpolator(Constant.Interpolator.Scale);
+        scaleIn.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            mMainContainer.setScaleY(value);
+            mMainContainer.setScaleX(value);
+            mMainContainer.invalidate();
+        });
+
+        mShowModuleViewAnimator.play(alphaIn).with(scaleIn);
+
+        mHideModuleViewAnimator = new AnimatorSet();
+        ValueAnimator alphaHide = ValueAnimator.ofFloat(1, 0);
+        alphaHide.setDuration(Constant.Duration.Alpha);
+        alphaHide.setInterpolator(Constant.Interpolator.Alpha);
+        alphaHide.addUpdateListener(animation -> {
+            mMainContainer.setAlpha((float) animation.getAnimatedValue());
+            mMainContainer.invalidate();
+        });
+
+        ValueAnimator scaleOut = ValueAnimator.ofFloat(1f, 0.1f);
+        scaleOut.setDuration(Constant.Duration.Scale);
+        scaleOut.setInterpolator(Constant.Interpolator.Scale);
+        scaleOut.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            mMainContainer.setScaleY(value);
+            mMainContainer.setScaleX(value);
+            mMainContainer.invalidate();
+        });
+
+        mHideModuleViewAnimator.play(alphaHide).with(scaleOut);
     }
 
     private void initModuleRecyclerView() {
-//        RecyclerView recyclerView = new RecyclerView(mActivity);
+        RecyclerView recyclerView = mActivity.findViewById(R.id.module_container_name_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false));
 
-//        ModuleListAdapter adapter = new ModuleListAdapter(mModuleManager.getModeNameList());
+        ModuleListAdapter adapter = new ModuleListAdapter(mModuleManager.getModeNameList(), this::onModuleChanged);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void onModuleChanged(String module) {
+        BaseModule target = mModuleManager.getModules(module);
+
+        if (mModuleManager.checkToChangeModule(target)) {
+            mHideModuleViewAnimator.removeAllListeners();
+            mHideModuleViewAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mModuleManager.doChange(target);
+
+                    mMainContainer.removeAllViews();
+                    View view = target.getView(mActivity);
+
+                    if (null != view) {
+                        mMainContainer.addView(view);
+                    }
+
+                    mShowModuleViewAnimator.start();
+                }
+            });
+            mHideModuleViewAnimator.start();
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void initContainerView() {
-        mMainContainer = mActivity.findViewById(R.id.module_view_container);
-        mMainContainer.setZ(Integer.MAX_VALUE);
-        mMainContainer.setVisibility(View.INVISIBLE);
-        mMainContainer.setOnTouchListener((v, event) -> true);
+        mContainerRoot = mActivity.findViewById(R.id.module_view_container);
+        mContainerRoot.setZ(Integer.MAX_VALUE);
+        mContainerRoot.setVisibility(View.INVISIBLE);
+        mContainerRoot.setOnTouchListener((v, event) -> true);
+
+        mMainContainer = mActivity.findViewById(R.id.module_container);
 
         CloseButton closeButton = mActivity.findViewById(R.id.module_container_close_button);
         closeButton.setOnClickListener(v -> {
@@ -82,14 +216,14 @@ public class ContainerUIManager {
         RelativeLayout mRootView = mActivity.findViewById(R.id.root_view);
         mRootView.addView(mSettingButton);
         mSettingButton.setOnClickListener(v -> {
-            PackageManager pm = mActivity.getPackageManager();
-            pm.setComponentEnabledSetting(mActivity.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
-            pm.setComponentEnabledSetting(new ComponentName(mActivity,
-                            "online.nonamekill.android.module.icon.fangtian"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP);
+//            PackageManager pm = mActivity.getPackageManager();
+//            pm.setComponentEnabledSetting(mActivity.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//                    PackageManager.DONT_KILL_APP);
+//            pm.setComponentEnabledSetting(new ComponentName(mActivity,
+//                            "online.nonamekill.android.module.icon.fangtian"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+//                    PackageManager.DONT_KILL_APP);
 
-//            setModuleContainerVisible(View.VISIBLE)
+            setModuleContainerVisible(View.VISIBLE);
         });
 
         mSettingDragHelper = ViewDragHelper.create(mRootView, new SettingDragCallback());
@@ -100,11 +234,22 @@ public class ContainerUIManager {
             mSettingDragHelper.processTouchEvent(ev);
         }
 
+        if ((null != mContainerRoot) && mContainerRoot.isShown()) {
+            Rect rect = new Rect();
+            mContainerRoot.getGlobalVisibleRect(rect);
+
+            if (!rect.contains((int) ev.getX(), (int) ev.getY())) {
+                setModuleContainerVisible(View.INVISIBLE);
+
+                return true;
+            }
+        }
+
         return false;
     }
 
     public boolean onBackPressed() {
-        if ((null != mMainContainer) && mMainContainer.isShown()) {
+        if ((null != mContainerRoot) && mContainerRoot.isShown()) {
             setModuleContainerVisible(View.INVISIBLE);
 
             return true;
@@ -151,17 +296,18 @@ public class ContainerUIManager {
 
     private void setModuleContainerVisible(int visible) {
         if (View.VISIBLE == visible) {
-            mMainContainer.setVisibility(View.VISIBLE);
-            mMainContainer.clearAnimation();
-            mMainContainer.setAlpha(0f);
-            mMainContainer.setScaleX(0.1f);
-            mMainContainer.setScaleY(0.1f);
-            mMainContainer.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+            if (mHideRootAnimator.isStarted()) {
+                mHideRootAnimator.cancel();
+            }
+
+            mShowRootAnimator.removeAllListeners();
+            mShowRootAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
-                public void onAnimationEnd(Animator animation) {
-                    mSettingButton.setEnabled(false);
+                public void onAnimationStart(Animator animation) {
+                    mContainerRoot.setVisibility(View.VISIBLE);
                 }
-            }).start();
+            });
+            mShowRootAnimator.start();
 
             mSettingButton.clearAnimation();
             mSettingButton.animate().alpha(0f).setDuration(250).setListener(new AnimatorListenerAdapter() {
@@ -172,19 +318,18 @@ public class ContainerUIManager {
                 }
             }).start();
         } else {
-            mMainContainer.clearAnimation();
-            mMainContainer.animate()
-                    .scaleX(0.1f)
-                    .scaleY(0.1f)
-                    .alpha(0f)
-                    .setDuration(250)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            mMainContainer.setVisibility(View.INVISIBLE);
-                        }
-                    })
-                    .start();
+            if (mShowRootAnimator.isStarted()) {
+                mShowRootAnimator.cancel();
+            }
+            mHideRootAnimator.removeAllListeners();
+            mHideRootAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mContainerRoot.setVisibility(View.GONE);
+                }
+            });
+            mHideRootAnimator.start();
+
             mSettingButton.clearAnimation();
             mSettingButton.setVisibility(View.VISIBLE);
             mSettingButton.animate().alpha(1f).setDuration(250).setListener(new AnimatorListenerAdapter() {

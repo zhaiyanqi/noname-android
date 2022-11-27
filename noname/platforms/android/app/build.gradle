@@ -33,7 +33,7 @@ buildscript {
             throw new GradleException("The defined Kotlin version (${cordovaConfig.KOTLIN_VERSION}) does not appear to be a valid version.")
         }
     }
-    
+
     apply from: "${project.rootDir}/repositories.gradle"
     repositories repos
 
@@ -301,6 +301,7 @@ dependencies {
     // module
     implementation project(":lib_common")
     implementation project(":module_import")
+    implementation project(":module_icon")
 }
 
 def addSigningProps(propsFilePath, signingConfig) {
