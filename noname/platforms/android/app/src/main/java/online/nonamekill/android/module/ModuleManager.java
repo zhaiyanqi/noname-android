@@ -1,12 +1,14 @@
 package online.nonamekill.android.module;
 
 import android.app.Activity;
+import android.content.Intent;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 import online.nonamekill.android.module.about.ModuleAbout;
 import online.nonamekill.android.module.icon.ModuleIcon;
+import online.nonamekill.android.module.qqfile.ModuleQQFile;
 import online.nonamekill.common.module.BaseModule;
 
 public class ModuleManager {
@@ -17,6 +19,7 @@ public class ModuleManager {
     public ModuleManager(Activity activity) {
         mActivity = activity;
         mModules.add(new ModuleIcon());
+        mModules.add(new ModuleQQFile());
         mModules.add(new ModuleAbout());
     }
 
@@ -83,7 +86,9 @@ public class ModuleManager {
         mCurrentModule = module;
     }
 
-    public BaseModule getFirstModule() {
-        return mModules.get(0);
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        for (BaseModule m : mModules) {
+            m.onActivityResult(requestCode, resultCode, intent);
+        }
     }
 }

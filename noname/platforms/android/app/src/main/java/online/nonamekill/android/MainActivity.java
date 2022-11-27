@@ -110,6 +110,15 @@ public class MainActivity extends CordovaActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (null != mContainerUIManager) {
+            mContainerUIManager.onActivityResult(requestCode, resultCode, intent);
+        }
+    }
+
+    @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if ((event.getKeyCode() == KeyEvent.KEYCODE_BACK) && mContainerUIManager.onBackPressed()) {
             return true;

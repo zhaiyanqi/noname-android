@@ -6,6 +6,7 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
@@ -335,5 +336,9 @@ public class ContainerUIManager {
                 }
             }).start();
         }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        mModuleManager.onActivityResult(requestCode, resultCode, intent);
     }
 }
