@@ -10,7 +10,6 @@ public class ThreadUtil {
     // 通用线程
     private static ExecutorService threadPool = null;
 
-
     public static void init() {
         threadPool = Executors.newFixedThreadPool(3);
     }

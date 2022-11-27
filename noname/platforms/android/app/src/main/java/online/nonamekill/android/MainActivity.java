@@ -28,6 +28,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
@@ -51,6 +52,9 @@ public class MainActivity extends CordovaActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        hideNavigationBar();
+
         mContainerUIManager = new ContainerUIManager(this);
         init();
 
@@ -65,6 +69,15 @@ public class MainActivity extends CordovaActivity {
                 overridePendingTransition(0, 0);
             }
         }
+    }
+
+    /**
+     * 隐藏导航条
+     */
+    private void hideNavigationBar() {
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
+        getWindow().setAttributes(params);
     }
 
     @Override
@@ -88,9 +101,7 @@ public class MainActivity extends CordovaActivity {
         RelativeLayout rootView = findViewById(R.id.root_view);
 
         WebView view = (WebView) appView.getView();
-        view.setLayoutParams(new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         view.setBackgroundColor(Color.BLACK);
         view.requestFocusFromTouch();
         view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
