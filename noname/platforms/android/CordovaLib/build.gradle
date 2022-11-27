@@ -18,7 +18,7 @@
 
 buildscript {
     apply from: 'cordova.gradle'
-    apply from: 'repositories.gradle'
+    apply from: "${project.rootDir}/repositories.gradle"
 
     repositories repos
 

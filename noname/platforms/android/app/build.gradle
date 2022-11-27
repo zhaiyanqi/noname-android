@@ -33,8 +33,8 @@ buildscript {
             throw new GradleException("The defined Kotlin version (${cordovaConfig.KOTLIN_VERSION}) does not appear to be a valid version.")
         }
     }
-
-    apply from: 'repositories.gradle'
+    
+    apply from: "${project.rootDir}/repositories.gradle"
     repositories repos
 
     dependencies {
