@@ -216,13 +216,6 @@ public class ContainerUIManager {
         RelativeLayout mRootView = mActivity.findViewById(R.id.root_view);
         mRootView.addView(mSettingButton);
         mSettingButton.setOnClickListener(v -> {
-//            PackageManager pm = mActivity.getPackageManager();
-//            pm.setComponentEnabledSetting(mActivity.getComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-//                    PackageManager.DONT_KILL_APP);
-//            pm.setComponentEnabledSetting(new ComponentName(mActivity,
-//                            "online.nonamekill.android.module.icon.fangtian"), PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-//                    PackageManager.DONT_KILL_APP);
-
             setModuleContainerVisible(View.VISIBLE);
         });
 

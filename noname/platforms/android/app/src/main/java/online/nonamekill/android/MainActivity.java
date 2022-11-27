@@ -46,11 +46,24 @@ public class MainActivity extends CordovaActivity {
 
     private ContainerUIManager mContainerUIManager = null;
 
+    private boolean mbUrlLoaded = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContainerUIManager = new ContainerUIManager(this);
-        init();
+
+        if (GameResourceUtil.checkGameResource(this)) {
+            loadUrl(launchUrl);
+            mbUrlLoaded = true;
+        } else {
+            if (GameResourceUtil.checkAssetContext(this)) {
+                Intent intent = new Intent();
+                intent.setClass(this, ImportActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+        }
     }
 
     @Override
@@ -60,18 +73,12 @@ public class MainActivity extends CordovaActivity {
 
     @Override
     protected void onResume() {
-        if (GameResourceUtil.checkGameResource(this)) {
-            loadUrl(launchUrl);
-        } else {
-            if (GameResourceUtil.checkAssetContext(this)) {
-                Intent intent = new Intent();
-                intent.setClass(this, ImportActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            }
-        }
-
         super.onResume();
+
+        if (!mbUrlLoaded && GameResourceUtil.checkGameResource(this)) {
+            loadUrl(launchUrl);
+            mbUrlLoaded = true;
+        }
     }
 
     @Override

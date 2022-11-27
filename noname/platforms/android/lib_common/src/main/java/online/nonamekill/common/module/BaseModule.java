@@ -1,13 +1,14 @@
 package online.nonamekill.common.module;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
 public class BaseModule {
-    private Context mContext = null;
+    private Activity mActivity = null;
 
-    public void onCreate(Context context) {
-        mContext = context;
+    public void onCreate(Activity context) {
+        mActivity = context;
     }
 
     public void onPreCreate() {
@@ -15,7 +16,11 @@ public class BaseModule {
     }
 
     protected Context getContext() {
-        return mContext;
+        return mActivity;
+    }
+
+    protected Activity getActivity() {
+        return mActivity;
     }
 
     public View getView(Context context) {
