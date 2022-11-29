@@ -15,7 +15,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 public class ModuleItemView extends AppCompatTextView {
 
-    private static final float SCALE_PRESSED = 1.2f;
+    private static final float SCALE_PRESSED = 1.05f;
     private static final float SCALE_NORMAL = 1f;
 
     private static final int ANIM_TIME_SHOW = 150;

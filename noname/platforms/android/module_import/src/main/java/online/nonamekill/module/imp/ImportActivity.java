@@ -16,6 +16,7 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 
 import online.nonamekill.common.Constant;
 import online.nonamekill.common.GameLog;
+import online.nonamekill.common.util.ActivityUtil;
 import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.common.util.ThreadUtil;
 
@@ -62,6 +63,7 @@ public class ImportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityUtil.hideNavigationBar(getWindow());
         setContentView(R.layout.activity_import);
 
         mProgressBar = findViewById(R.id.number_progressbar);
@@ -73,7 +75,7 @@ public class ImportActivity extends AppCompatActivity {
         mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);
 
         try {
-            Context packageContext = createPackageContext("online.nonamekill.assets", CONTEXT_IGNORE_SECURITY);
+            Context packageContext = createPackageContext(Constant.ASSET_PACKAGE_NAME, CONTEXT_IGNORE_SECURITY);
 
             ThreadUtil.execute(() -> GameResourceUtil.copyAssetToGameFolder(this, packageContext, Constant.GAME_FOLDER, new GameResourceUtil.onCopyListener() {
                 @Override

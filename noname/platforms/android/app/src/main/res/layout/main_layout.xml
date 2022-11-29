@@ -10,7 +10,6 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="20dp"
         android:background="@drawable/module_view_container_background">
 
         <androidx.recyclerview.widget.RecyclerView

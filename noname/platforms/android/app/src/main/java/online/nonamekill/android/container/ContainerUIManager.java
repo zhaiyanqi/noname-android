@@ -231,17 +231,6 @@ public class ContainerUIManager {
             mSettingDragHelper.processTouchEvent(ev);
         }
 
-        if ((null != mContainerRoot) && mContainerRoot.isShown()) {
-            Rect rect = new Rect();
-            mContainerRoot.getGlobalVisibleRect(rect);
-
-            if (!rect.contains((int) ev.getX(), (int) ev.getY())) {
-                setModuleContainerVisible(View.INVISIBLE);
-
-                return true;
-            }
-        }
-
         return false;
     }
 

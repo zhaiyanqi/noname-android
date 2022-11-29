@@ -20,7 +20,5 @@ public class Constant {
         PathInterpolator Alpha = new PathInterpolator(0.33f, 0, 0.67f, 1f);
         PathInterpolator Scale = new PathInterpolator(0.33f, 0, 0.67f, 1f);
         PathInterpolator Translate = new PathInterpolator(0.3f, 0, 0.1f, 1f);
-
-
     }
 }

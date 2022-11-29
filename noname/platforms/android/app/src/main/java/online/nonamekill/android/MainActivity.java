@@ -39,7 +39,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import online.nonamekill.android.container.ContainerUIManager;
-import online.nonamekill.common.Constant;
+import online.nonamekill.common.util.ActivityUtil;
 import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.module.imp.ImportActivity;
 
@@ -53,7 +53,7 @@ public class MainActivity extends CordovaActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        hideNavigationBar();
+        ActivityUtil.hideNavigationBar(getWindow());
 
         mContainerUIManager = new ContainerUIManager(this);
         init();
