@@ -253,8 +253,6 @@ public class AppUtils {
                     //添加activity切换动画效果
                     launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     getContext().startActivity(launchIntent);
-                    /*ActivityManager am = (ActivityManager) getContext().getSystemService(ACTIVITY_SERVICE);
-                    am.killBackgroundProcesses("com.tencent.mobileqq");*/
                     killCurrentProcess();
                     System.exit(0);
                 }, 300);

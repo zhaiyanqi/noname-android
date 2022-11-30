@@ -4,23 +4,20 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.lxj.xpopup.XPopup;
+import com.alibaba.fastjson.JSONArray;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,50 +25,81 @@ import java.util.Map;
 import java.util.Objects;
 
 import online.nonamekill.android.module.qqfile.util.FileUriUtils;
-import online.nonamekill.common.module.BaseModule;
+import online.nonamekill.common.util.FileUtil;
+import online.nonamekill.common.util.RxToast;
 import online.nonamekill.common.util.ThreadUtil;
+import online.nonamekill.common.util.XPopupUtil;
+import online.nonamekill.common.versionAdapter.AdapterListAbstract;
+import online.nonamekill.common.versionAdapter.VersionData;
+import online.nonamekill.common.versionAdapter.VersionListRecyclerAdapter;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class ModuleQQFile extends BaseModule {
+public class ModuleQQFile extends AdapterListAbstract {
     // 2022年11月27日21点
     private static final int REQUEST_DATA_ALL_CODE = 2022112721;
-
-    private static final String QQ_FILE_RECV = "Android/data/com.tencent.mobileqq/Tencent/QQfile_recv";
-    private static final String PRIMARY_QQ_FILE_RECV = "/tree/primary:Android/data/document/primary:";
+    // 未授权
+    private static final int UNAUTHORIZED = 0;
+    private final String QQ_FILE_RECV = "Android/data/com.tencent.mobileqq/Tencent/QQfile_recv";
+    private final String PRIMARY_QQ_FILE_RECV = "/tree/primary:Android/data/document/primary:";
     // nt_qq_ 频道的标识符 由于只能获取ROOT权限或者虚拟机下才能访问，故放弃实现
     // private static final String FILE_ORI = "/File/Ori";
     private final DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance();
+    // 文件不存在
+    private final int FILE_NOT_EXISTS = 1;
+    // 获取了权限，而且文件存在
+    private final int ALL_OK = 2;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    /*@RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View getView(Context context) {
         View inflate = LayoutInflater.from(context).inflate(R.layout.module_qqfile_layout, null);
-
-        Button viewById = inflate.findViewById(R.id.module_qqfile_button);
-        viewById.setOnClickListener((v) -> {
-            try {
-                /*Uri uri = Uri.parse("content://com.android.externalstorage.documents/document/primary%3AAndroid%2Fdata/com.tencent.mobileqq");
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                getActivity().startActivityForResult(intent, 6666);*/
-                checkPermission();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
         return inflate;
+    }*/
+
+    @Override
+    protected void initAdapter(View view) {
+        adapter = new VersionListRecyclerAdapter() {
+
+            @Override
+            protected void onItemClick(View view, VersionData data) {
+
+            }
+
+            @Override
+            public void onItemDelete(VersionData data) {
+
+            }
+
+            @Override
+            public void replaceList(List<VersionData> l) {
+                if (mRefreshLayout.isRefreshing()) {
+                    setRefreshing(false);
+                }
+                loadingText.setVisibility(View.GONE);
+                list.clear();
+                list.addAll(l);
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    @Override
+    protected void initTitle(View view) {
+        TextView title_text_1 = view.findViewById(R.id.title_text_1);
+        title_text_1.setText("文件名称");
+        TextView title_text_2 = view.findViewById(R.id.title_text_2);
+        title_text_2.setText("文件大小");
+        TextView title_text_3 = view.findViewById(R.id.title_text_3);
+        title_text_3.setText("修改时间");
+        TextView title_text_4 = view.findViewById(R.id.title_text_4);
+        title_text_4.setText("文件路径");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void checkPermission() {
+    private int checkPermission() {
         // 检测是否授权
         if (!FileUriUtils.isGrant(getActivity(), "Android/data")) {
-            FileUriUtils.startForRoot(getActivity(), REQUEST_DATA_ALL_CODE);
-            return;
+            return UNAUTHORIZED;
         }
         // 获取qq下载的文件路径
         DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(),
@@ -79,21 +107,30 @@ public class ModuleQQFile extends BaseModule {
         // 是否存在
         if (Objects.isNull(documentFile)) {
             Toast.makeText(getContext(), "未找到QQ下载的路径！", Toast.LENGTH_SHORT).show();
-            return;
+            return FILE_NOT_EXISTS;
         }
-        refresh();
+        return ALL_OK;
     }
 
-    void refresh() {
-        DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(),
-                Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
-
-        if (Objects.isNull(documentFile)) {
-            Toast.makeText(getContext(), "未找到QQ下载的路径！", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        ThreadUtil.execute(() -> {
-            List<Map<String, String>> array = new ArrayList<>();
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void refresh() {
+        ThreadUtil.submit(() -> {
+            int permission = checkPermission();
+            switch (permission) {
+                case UNAUTHORIZED: {
+                    XPopupUtil.asConfirm(getActivity(), "授权Android/data提示！", "需要授权Android/data目录权限才能使用此功能，是否进行授权？", () -> {
+                        FileUriUtils.startForRoot(getActivity(), REQUEST_DATA_ALL_CODE);
+                    });
+                    return;
+                }
+                case FILE_NOT_EXISTS: {
+                    return;
+                }
+            }
+            DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(),
+                    Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
+            JSONArray array = new JSONArray();
             DocumentFile[] documentFiles = documentFile.listFiles();
             Arrays.stream(documentFiles)
                     .filter(DocumentFile::isFile)
@@ -104,26 +141,24 @@ public class ModuleQQFile extends BaseModule {
                         object.put("name", name);
                         object.put("date", dateTimeFormat.format(file.lastModified()));
                         object.put("path", file.getUri().getPath().replace(PRIMARY_QQ_FILE_RECV, ""));
-//                    object.put("size", FileUtil.getFileSize(file.length()));
+                        object.put("size", FileUtil.getFileSize(file.length()));
                         array.add(object);
                     });
-            System.out.println(array);
-            XPopup.Builder builder = new XPopup.Builder(getContext());
-            builder.isViewMode(true)
-                    .isDestroyOnDismiss(true)        // 设置使用完后就销毁
-                    .isDarkTheme(false)             // 使用暗色主题
-                    .hasStatusBar(false)            // 设置是否显示状态栏
-                    .dismissOnTouchOutside(false)   // 设置点击弹窗外面是否关闭弹窗，默认为true
-                    .dismissOnBackPressed(false);   // 设置按下返回键是否关闭弹窗，默认为true
-            builder.asConfirm("QQ下载的zip和7z文件", array.toString(), () -> {
-            }).show();
+            List<VersionData> lists = array.toJavaList(VersionData.class);
+            getActivity().runOnUiThread(() -> {
+                adapter.replaceList(lists);
+            });
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("WrongConstant")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+        // 如果不是请求Android/data权限的话，就不执行了，因为其他请求页面的回调会报错
+        if (!Objects.equals(requestCode, REQUEST_DATA_ALL_CODE)) return;
+
         if (resultCode == RESULT_OK) {
             Uri uri;
             if (Objects.isNull(intent)) {
@@ -134,9 +169,9 @@ public class ModuleQQFile extends BaseModule {
                 getActivity().getContentResolver()
                         .takePersistableUriPermission(uri, intent.getFlags()
                                 & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
-//                RxToast.success("授权目录成功");
+                RxToast.success(getActivity(), "授权目录成功");
                 Toast.makeText(getContext(), "授权目录成功", Toast.LENGTH_SHORT).show();
-                //refresh();
+                refresh();
             }
         } else if (resultCode == RESULT_CANCELED) {
             Toast.makeText(getContext(), "取消目录授权", Toast.LENGTH_SHORT).show();

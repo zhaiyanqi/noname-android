@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="wave_view_wave_color">#3F77AD</color>
+    <color name="wave_view_wave_color1">#24ED2D</color>
+    <color name="wave_view_border_color">#4A4A4A</color>
+    <color name="loading_view_background_color">#59000000</color>
+
+    <color name="colorPrimary">#008577</color>
+
+
+    <color name="white">#ffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="round_corner_progress_bar_background_default">#5f5f5f</color>
+    <color name="round_corner_progress_bar_progress_default">#7f7f7f</color>
+    <color name="custom_progress_background">#ff3c3a3b</color>
+    <color name="custom_progress_green_progress">#ff669900</color>
+    <color name="custom_progress_green_progress_half">#7f669900</color>
+    <color name="custom_progress_red_progress">#ffff4444</color>
+    <color name="custom_progress_red_progress_half">#7fff4444</color>
+    <color name="custom_progress_purple_progress">#ff9933cc</color>
+    <color name="custom_progress_blue_header">#ff33b5e5</color>
+    <color name="custom_progress_purple_header">#ffaa66cc</color>
+</resources>

@@ -39,7 +39,12 @@ dependencies {
     implementation 'com.github.li-xiaojun:XPopup:2.7.0'
     // fastjson
     implementation 'com.alibaba:fastjson:1.1.72.android'
-
+    // 引入androidx
+    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation "androidx.appcompat:appcompat:$versionAppCompat"
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    // 下拉刷新球
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     implementation project(":lib_common")
 }

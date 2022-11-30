@@ -4,12 +4,17 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 
+import androidx.annotation.RequiresApi;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import online.nonamekill.common.Constant;
 
@@ -111,18 +116,16 @@ public class GameResourceUtil {
             outFile.getParentFile().mkdirs();
             outFile.createNewFile();
 
-            FileOutputStream out = new FileOutputStream(outFile);
-            InputStream in = assetManager.open(file);
+            // 使用try-while-resource 自动关闭流
+            try(FileOutputStream out = new FileOutputStream(outFile);
+            InputStream in = assetManager.open(file);) {
+                byte[] buf = new byte[1024];
+                int len;
 
-            byte[] buf = new byte[1024];
-            int len;
-
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
             }
-
-            in.close();
-            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -140,6 +143,10 @@ public class GameResourceUtil {
         void onCheck(boolean exist);
     }
 
+    public static boolean checkIfGamePath(File file){
+        return checkIfGamePath(file, null);
+    }
+    
     public static boolean checkIfGamePath(File file, OnCheckResult listener) {
         if (null != file) {
             File[] gameFolders = file.listFiles(dir -> dir.isDirectory() && Constant.GAME_FOLDER_NAME.equals(dir.getName()));
@@ -153,5 +160,29 @@ public class GameResourceUtil {
         }
 
         return false;
+    }
+
+    public static List<File> findGameInPath(File root) {
+        ArrayList<File> list = new ArrayList<>();
+
+        if (checkIfGamePath(root)) {
+            list.add(root);
+        }
+
+        if (null != root) {
+            File[] files = root.listFiles();
+
+            if (null != files) {
+                for (File file : files) {
+                    if (checkIfGamePath(file)) {
+                        list.add(file);
+                    } else {
+                        list.addAll(findGameInPath(file));
+                    }
+                }
+            }
+        }
+
+        return list;
     }
 }

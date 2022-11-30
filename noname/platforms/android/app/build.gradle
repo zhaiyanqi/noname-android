@@ -296,6 +296,11 @@ dependencies {
     // SUB-PROJECT DEPENDENCIES START
     implementation(project(path: ":CordovaLib"))
     implementation "androidx.webkit:webkit:1.4.0"
+    // 弹窗工具
+    implementation 'com.github.li-xiaojun:XPopup:2.7.0'
+
+    // PermissionX申请权限的工具
+    implementation 'com.guolindev.permissionx:permissionx:1.6.1'
     // SUB-PROJECT DEPENDENCIES END
 
     // module
@@ -304,6 +309,8 @@ dependencies {
     implementation project(":module_icon")
     implementation project(":module_qqfile")
     implementation project(":module_about")
+    implementation project(":module_version")
+    implementation project(":module_server")
 }
 
 def addSigningProps(propsFilePath, signingConfig) {

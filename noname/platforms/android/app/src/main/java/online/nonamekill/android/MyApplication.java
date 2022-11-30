@@ -14,8 +14,9 @@ public class MyApplication extends Application {
 
         // 初始化AppUtils类
         AppUtils.initialize(this);
-
+        // 初始化MMKV
         DataManager.getInstance().initialize(this);
+        // 初始化线程池
         ThreadUtil.init();
     }
 }

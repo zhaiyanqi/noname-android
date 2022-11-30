@@ -8,8 +8,8 @@ import android.view.View;
 public class BaseModule {
     private Activity mActivity = null;
 
-    public void onCreate(Activity context) {
-        mActivity = context;
+    public void onCreate(Activity activity) {
+        mActivity = activity;
     }
 
     public void onPreCreate() {
@@ -44,5 +44,9 @@ public class BaseModule {
 
     }
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    }
+
+    public void onCreateView(View view) {
+
     }
 }

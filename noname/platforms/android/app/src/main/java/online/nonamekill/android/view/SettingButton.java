@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.permissionx.guolindev.PermissionX;
+
 public class SettingButton extends AppCompatImageView {
 
     private static final float SCALE_PRESSED = 1.2f;

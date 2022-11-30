@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/normal_shadow_style"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="5dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="0.5dip"
+        android:gravity="center"
+        android:textSize="14sp">
+
+        <TextView
+            android:id="@+id/version_list_name"
+            style="@style/normal_shadow_style"
+            android:layout_width="0.0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/version_list_size"
+            style="@style/normal_shadow_style"
+            android:layout_width="0.0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/version_list_date"
+            style="@style/normal_shadow_style"
+            android:layout_width="0.0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/version_list_path"
+            style="@style/normal_shadow_style"
+            android:layout_width="0.0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:layout_weight="2"
+            android:gravity="center" />
+
+        <FrameLayout
+            android:id="@+id/version_list_enable"
+            style="@style/normal_shadow_style"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0.0dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            >
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/extension_list_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textOff="@string/off"
+                android:textOn="@string/on"
+                android:thumb="@drawable/switch_common_thumb"
+                app:track="@drawable/switch_ios_track_selector" />
+
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:id="@+id/version_list_show"
+            style="@style/normal_shadow_style"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0.0dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/extension_list_show"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textOff="@string/off"
+                android:textOn="@string/on"
+                android:thumb="@drawable/switch_common_thumb"
+                app:track="@drawable/switch_ios_track_selector" />
+
+        </FrameLayout>
+
+    </TableRow>
+</TableLayout>

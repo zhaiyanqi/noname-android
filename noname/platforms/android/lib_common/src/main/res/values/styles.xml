@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="lunch_layout_button_style">
+        <item name="android:button">@null</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/button_info</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingTop">@dimen/lunch_layout_button_padding</item>
+        <item name="android:paddingBottom">@dimen/lunch_layout_button_padding</item>
+        <item name="android:layout_marginTop">9dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:shadowColor">#33000000</item>
+        <item name="android:shadowRadius">8</item>
+    </style>
+
+    <style name="switchStyle" parent="Theme.AppCompat.Light">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="normal_shadow_style">
+        <item name="android:shadowColor">#80000000</item>
+        <item name="android:shadowRadius">8</item>
+    </style>
+
+    <style name="asset_fragment_text_style">
+        <item name="android:shadowColor">#80000000</item>
+        <item name="android:shadowRadius">8</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_margin">3dp</item>
+
+    </style>
+
+
+    <declare-styleable name="TextRoundCornerProgress">
+        <attr name="rcTextProgressColor" format="color"/>
+        <attr name="rcTextProgressSize" format="dimension"/>
+        <attr name="rcTextProgressMargin" format="dimension"/>
+        <attr name="rcTextProgress" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="RoundCornerProgress">
+        <attr name="rcReverse" format="boolean"/>
+        <attr name="rcProgress" format="float"/>
+        <attr name="rcMax" format="float"/>
+        <attr name="rcSecondaryProgress" format="float"/>
+        <attr name="rcBackgroundPadding" format="dimension"/>
+        <attr name="rcRadius" format="dimension"/>
+        <attr name="rcProgressColor" format="color"/>
+        <attr name="rcSecondaryProgressColor" format="color"/>
+        <attr name="rcBackgroundColor" format="color"/>
+    </declare-styleable>
+    <declare-styleable name="RxRoundProgress">
+        <attr name="roundColor" format="color"/>
+        <attr name="roundProgressColor" format="color"/>
+        <attr name="roundWidth" format="dimension"/>
+        <attr name="textColor1" format="color"/>
+        <attr name="textSize1" format="dimension"/>
+        <attr name="max" format="integer"/>
+        <attr name="textIsDisplayable" format="boolean"/>
+        <attr name="style">
+            <enum name="STROKE" value="0"/>
+            <enum name="FILL" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="AttachButton">
+        <!--是否需要自动吸边-->
+        <attr name="customIsAttach" format="boolean" />
+        <!--是否可拖曳-->
+        <attr name="customIsDrag" format="boolean" />
+    </declare-styleable>
+
+</resources>

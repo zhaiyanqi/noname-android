@@ -27,4 +27,12 @@ public class GameLog {
     public static void e(String tag, String msg) {
         Log.e(tag, msg);
     }
+
+    public static void e(String tag, Throwable throwable) {
+        Log.e(tag, Log.getStackTraceString(throwable));
+    }
+
+    public static void e(Class<?> clazz, Throwable throwable) {
+        Log.e(clazz.getSimpleName().toUpperCase(), Log.getStackTraceString(throwable));
+    }
 }

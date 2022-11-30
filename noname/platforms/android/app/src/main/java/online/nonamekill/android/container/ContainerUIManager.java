@@ -6,14 +6,17 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.customview.widget.ViewDragHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,9 +52,9 @@ public class ContainerUIManager {
     private AnimatorSet mShowModuleViewAnimator = null;
     private AnimatorSet mHideModuleViewAnimator = null;
 
-    public ContainerUIManager(Activity activity) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public ContainerUIManager(@NonNull Activity activity) {
         mActivity = activity;
-
         mModuleManager = new ModuleManager(activity);
     }
 
@@ -61,6 +64,18 @@ public class ContainerUIManager {
         initContainerView();
         initModuleRecyclerView();
         initAnimator();
+    }
+
+    public void onPause() {
+        mModuleManager.onPause();
+    }
+
+    public void onResume() {
+        mModuleManager.onResume();
+    }
+
+    public void onDestroy() {
+        mModuleManager.onDestroy();
     }
 
     private void initAnimator() {
@@ -181,6 +196,7 @@ public class ContainerUIManager {
                         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                         ViewGroup.LayoutParams.MATCH_PARENT);
                         mMainContainer.addView(view, params);
+                        target.onCreateView(view);
                     }
 
                     mShowModuleViewAnimator.start();
@@ -278,6 +294,17 @@ public class ContainerUIManager {
             DataManager.getInstance().setValue(DataKey.KEY_SETTING_BUTTON_TOP, mSettingButtonParams.topMargin);
             DataManager.getInstance().setValue(DataKey.KEY_SETTING_BUTTON_LEFT, mSettingButtonParams.leftMargin);
         }
+    }
+
+    public void openModuleContainer(){
+        openModuleContainer(null);
+    }
+
+    // 打开设置菜单
+    public void openModuleContainer(String moduleName){
+        setModuleContainerVisible(View.VISIBLE);
+        if(moduleName != null)
+            this.onModuleChanged(moduleName);
     }
 
     private void setModuleContainerVisible(int visible) {

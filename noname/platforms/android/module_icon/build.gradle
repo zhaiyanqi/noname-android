@@ -34,5 +34,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
+    // 弹窗工具
+    implementation 'com.github.li-xiaojun:XPopup:2.7.0'
+    // 引入androidx
+    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation "androidx.appcompat:appcompat:$versionAppCompat"
+
     implementation project(":lib_common")
 }

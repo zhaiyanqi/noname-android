@@ -19,11 +19,12 @@
 
 package online.nonamekill.android;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,22 +33,31 @@ import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
-import org.apache.cordova.*;
+import androidx.annotation.RequiresApi;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.impl.ConfirmPopupView;
+
+import org.apache.cordova.CordovaActivity;
+
+import java.io.File;
+import java.util.Objects;
 
 import online.nonamekill.android.container.ContainerUIManager;
+import online.nonamekill.common.Constant;
+import online.nonamekill.common.data.DataKey;
+import online.nonamekill.common.data.DataManager;
 import online.nonamekill.common.util.ActivityUtil;
 import online.nonamekill.common.util.GameResourceUtil;
+import online.nonamekill.common.util.RxToast;
 import online.nonamekill.module.imp.ImportActivity;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends CordovaActivity {
 
     private ContainerUIManager mContainerUIManager = null;
 
-    private boolean mbUrlLoaded = false;
+    private volatile boolean mbUrlLoaded = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +67,12 @@ public class MainActivity extends CordovaActivity {
 
         mContainerUIManager = new ContainerUIManager(this);
         init();
-
-        if (GameResourceUtil.checkGameResource(this)) {
+        // 优先查看游戏版本设置
+        if (checkVersionGamePath()){
+            JavaScriptBridge.setGamePath(DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH));
+            loadUrl(launchUrl);
+            mbUrlLoaded = true;
+        } else if (GameResourceUtil.checkGameResource(this)) {
             loadUrl(launchUrl);
             mbUrlLoaded = true;
         } else {
@@ -67,22 +81,43 @@ public class MainActivity extends CordovaActivity {
                 intent.setClass(this, ImportActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+            } else {
+                RxToast.error(this, "未找到lib_assets资源");
+                new Handler().postDelayed(() -> {
+                    XPopup.Builder builder = new XPopup.Builder(this);
+                    builder.isDestroyOnDismiss(true)
+                            .hasStatusBar(false)
+                            .dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false);
+                    ConfirmPopupView confirm = builder.asConfirm("警告", "未找到资源目录，请在版本管理界面进行切换游戏版本，或者下载lib_assets纯资源APK", () -> {
+                        mContainerUIManager.openModuleContainer();
+                    });
+                    confirm.isHideCancel = true;
+                    confirm.show();
+                }, 500);
             }
         }
     }
 
-    /**
-     * 隐藏导航条
-     */
-    private void hideNavigationBar() {
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE;
-        getWindow().setAttributes(params);
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private boolean checkVersionGamePath() {
+        String gamePath = DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH);
+        if(TextUtils.isEmpty(gamePath)) return false;
+
+        File file = cordovaInterface.getContext().getExternalFilesDir(gamePath);
+        if(Objects.isNull(file) || !file.exists()) {
+            RxToast.error(this, "设置的游戏主体不存在！");
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        mContainerUIManager.onPause();
     }
 
     @Override
@@ -93,6 +128,15 @@ public class MainActivity extends CordovaActivity {
             loadUrl(launchUrl);
             mbUrlLoaded = true;
         }
+
+        mContainerUIManager.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mContainerUIManager.onDestroy();
     }
 
     @Override

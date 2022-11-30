@@ -2,6 +2,10 @@ package online.nonamekill.common.util;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class ThreadUtil {
     // 获取手机CPU内核储量
@@ -14,8 +18,16 @@ public class ThreadUtil {
         threadPool = Executors.newFixedThreadPool(3);
     }
 
+    public static ExecutorService getThreadPool(){
+        return threadPool;
+    }
+
     public static void execute(Runnable runnable) {
         threadPool.execute(runnable);
+    }
+
+    public static Future<?> submit(Runnable runnable){
+        return threadPool.submit(runnable);
     }
 
     /**
@@ -30,5 +42,17 @@ public class ThreadUtil {
         }
         // 最佳的线程数 = CPU可用核心数 / (1 - 阻塞系数)
         return (int) (NCPU / (1 - blockingCoefficient));
+    }
+
+
+    /**
+     * 创建固定数量的线程池
+     *
+     * @param blockingCoefficient
+     * @return
+     */
+    public static ExecutorService newFixedThreadPoolByBlockingCoefficient(float blockingCoefficient) {
+        int poolSizeCore = getPoolSizeByBlockingCoefficient(blockingCoefficient);
+        return new ThreadPoolExecutor(poolSizeCore, poolSizeCore, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     }
 }
