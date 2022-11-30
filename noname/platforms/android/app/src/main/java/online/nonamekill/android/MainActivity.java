@@ -56,6 +56,8 @@ public class MainActivity extends CordovaActivity {
 
     private ContainerUIManager mContainerUIManager = null;
 
+    private WebView mWebView = null;
+
     private volatile boolean mbUrlLoaded = false;
 
     @Override
@@ -98,7 +100,6 @@ public class MainActivity extends CordovaActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private boolean checkVersionGamePath() {
         String gamePath = DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH);
         if(TextUtils.isEmpty(gamePath)) return false;
@@ -143,15 +144,16 @@ public class MainActivity extends CordovaActivity {
         setContentView(R.layout.main_layout);
         RelativeLayout rootView = findViewById(R.id.root_view);
 
-        WebView view = (WebView) appView.getView();
-        view.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        view.setBackgroundColor(Color.BLACK);
-        view.requestFocusFromTouch();
-        view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        view.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        view.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
+        mWebView = (WebView) appView.getView();
+        mWebView.setId(Constant.WEB_VIEW_ID);
+        mWebView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mWebView.setBackgroundColor(Color.BLACK);
+        mWebView.requestFocusFromTouch();
+        mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        mWebView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        mWebView.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
 
-        rootView.addView(view);
+        rootView.addView(mWebView);
         mContainerUIManager.onCreate();
     }
 
