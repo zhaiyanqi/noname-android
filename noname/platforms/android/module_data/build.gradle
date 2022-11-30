@@ -4,11 +4,11 @@ plugins {
 
 android {
     namespace 'online.nonamekill.android.module.data'
-    compileSdkVersion 32
+    compileSdkVersion versionCompileSdk
 
     defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion 32
+        minSdkVersion versionMinSDK
+        targetSdkVersion versionTargetSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

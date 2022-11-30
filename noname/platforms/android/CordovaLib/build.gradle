@@ -42,7 +42,7 @@ allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion cordovaConfig.SDK_VERSION
+    compileSdkVersion versionCompileSdk
     buildToolsVersion cordovaConfig.BUILD_TOOLS_VERSION
 
     compileOptions {
@@ -52,7 +52,7 @@ android {
 
     // For the Android Cordova Lib, we allow changing the minSdkVersion, but it is at the users own risk
     defaultConfig {
-        minSdkVersion cordovaConfig.MIN_SDK_VERSION
+        minSdkVersion versionMinSDK
     }
 
     sourceSets {
