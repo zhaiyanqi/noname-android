@@ -52,7 +52,6 @@ import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.common.util.RxToast;
 import online.nonamekill.module.imp.ImportActivity;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends CordovaActivity {
 
     private ContainerUIManager mContainerUIManager = null;
