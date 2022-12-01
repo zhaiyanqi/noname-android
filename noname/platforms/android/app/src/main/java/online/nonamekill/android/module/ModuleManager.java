@@ -17,6 +17,7 @@ import online.nonamekill.android.module.qqfile.ModuleQQFile;
 import online.nonamekill.android.module.server.function.ModuleServer;
 import online.nonamekill.android.module.version.ModuleVersion;
 import online.nonamekill.common.module.BaseModule;
+import online.nonamekill.module.import_progress.ImportProgress;
 
 public class ModuleManager {
     private final Activity mActivity;
@@ -30,6 +31,7 @@ public class ModuleManager {
         mModules.add(new ModuleQQFile());
         mModules.add(new ModuleVersion());
         mModules.add(new ModuleServer());
+        mModules.add(new ImportProgress());
         mModules.add(new ModuleAbout());
     }
 

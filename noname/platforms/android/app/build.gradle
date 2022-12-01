@@ -311,6 +311,7 @@ dependencies {
     implementation project(":module_about")
     implementation project(":module_version")
     implementation project(":module_server")
+    implementation project(":module_import_progress")
 }
 
 def addSigningProps(propsFilePath, signingConfig) {

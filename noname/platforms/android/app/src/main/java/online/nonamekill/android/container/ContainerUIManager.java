@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ import online.nonamekill.common.Constant;
 import online.nonamekill.common.data.DataKey;
 import online.nonamekill.common.data.DataManager;
 import online.nonamekill.common.module.BaseModule;
+import online.nonamekill.common.util.ThreadUtil;
 
 public class ContainerUIManager {
 
@@ -184,14 +187,12 @@ public class ContainerUIManager {
 
         if (mModuleManager.checkToChangeModule(target)) {
             mHideModuleViewAnimator.removeAllListeners();
+            mModuleManager.doChange(target);
+            mMainContainer.removeAllViews();
+            View view = target.getView(mActivity);
             mHideModuleViewAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mModuleManager.doChange(target);
-
-                    mMainContainer.removeAllViews();
-                    View view = target.getView(mActivity);
-
                     if (null != view) {
                         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                         ViewGroup.LayoutParams.MATCH_PARENT);
@@ -300,11 +301,11 @@ public class ContainerUIManager {
         openModuleContainer(null);
     }
 
-    // 打开设置菜单
+    // 打开设置菜单切换到对应的模块上，就是太卡了，不推荐使用
     public void openModuleContainer(String moduleName){
         setModuleContainerVisible(View.VISIBLE);
         if(moduleName != null)
-            this.onModuleChanged(moduleName);
+            new Handler(Looper.getMainLooper()).post(()->this.onModuleChanged(moduleName));
     }
 
     private void setModuleContainerVisible(int visible) {

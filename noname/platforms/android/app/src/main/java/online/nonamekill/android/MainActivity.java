@@ -64,6 +64,7 @@ public class MainActivity extends CordovaActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ActivityUtil.hideNavigationBar(getWindow());
         ActivityUtil.hideSystemUI(getWindow());
 
 
@@ -99,7 +100,7 @@ public class MainActivity extends CordovaActivity {
                             .dismissOnTouchOutside(false)
                             .dismissOnBackPressed(false);
                     ConfirmPopupView confirm = builder.asConfirm("警告", "未找到资源目录，请在版本管理界面进行切换游戏版本，或者下载lib_assets纯资源APK", () -> {
-                        mContainerUIManager.openModuleContainer();
+                        mContainerUIManager.openModuleContainer("版本管理");
                     });
                     confirm.isHideCancel = true;
                     confirm.show();

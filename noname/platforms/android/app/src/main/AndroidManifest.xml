@@ -62,6 +62,21 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="*"
+                    android:mimeType="application/zip"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="application/7z"
+                    android:scheme="content" />
+            </intent-filter>
+
         </activity>
     </application>
 </manifest>
