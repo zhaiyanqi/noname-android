@@ -63,7 +63,12 @@ public class MainActivity extends CordovaActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityUtil.hideNavigationBar(getWindow());
+        ActivityUtil.hideSystemUI(getWindow());
+
+
+
+//        Intent actionIntent = getIntent();
+//        boolean isActionView = (null != actionIntent) && Intent.ACTION_VIEW.equals(actionIntent.getAction());
 
         mContainerUIManager = new ContainerUIManager(this);
         init();
@@ -72,16 +77,19 @@ public class MainActivity extends CordovaActivity {
             JavaScriptBridge.setGamePath(DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH));
             loadUrl(launchUrl);
             mbUrlLoaded = true;
+            // 查看资源目录是否存在
         } else if (GameResourceUtil.checkGameResource(this)) {
             loadUrl(launchUrl);
             mbUrlLoaded = true;
         } else {
+            // 查看资源apk是否存在，存在就导入
             if (GameResourceUtil.checkAssetContext(this)) {
                 Intent intent = new Intent();
                 intent.setClass(this, ImportActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             } else {
+                // 没有版本目录不是主文件，资源apk也不存在
                 RxToast.error(this, "未找到lib_assets资源");
                 new Handler().postDelayed(() -> {
                     XPopup.Builder builder = new XPopup.Builder(this);

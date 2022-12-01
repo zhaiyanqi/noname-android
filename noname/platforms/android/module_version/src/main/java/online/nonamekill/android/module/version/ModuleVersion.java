@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ import java.util.concurrent.CompletableFuture;
 import online.nonamekill.common.GameLog;
 import online.nonamekill.common.data.DataKey;
 import online.nonamekill.common.data.DataManager;
+import online.nonamekill.common.util.ActivityUtil;
 import online.nonamekill.common.util.AppUtils;
 import online.nonamekill.common.util.FileUtil;
 import online.nonamekill.common.util.GameResourceUtil;
@@ -134,7 +136,7 @@ public class ModuleVersion extends AdapterListAbstract {
             adapter.unSelectAll();
 
             String curPath = getGamePath();
-            if (null != curPath) {
+            if (!TextUtils.isEmpty(curPath)) {
                 FileUtil.backupWebContentToPath(getContext(), curPath, data.getPath());
             }
             setGamePath(data.getPath());
@@ -191,9 +193,15 @@ public class ModuleVersion extends AdapterListAbstract {
 
     @Override
     protected void refresh() {
-        PermissionX.init((FragmentActivity) getActivity())
-                .permissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .request((allGranted, grantedList, deniedList) -> findAllGameFileInRootView(allGranted));
+        if (!PermissionX.isGranted(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) || !PermissionX.isGranted(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            XPopupUtil.asConfirm(getActivity(), "授权提示", "此功能需要授权文件的读写权限，是否授权？", () -> {
+                PermissionX.init((FragmentActivity) getActivity())
+                        .permissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .request((allGranted, grantedList, deniedList) -> findAllGameFileInRootView(allGranted));
+            });
+        } else {
+            ThreadUtil.submit(() -> findAllGameFileInRootView(true));
+        }
     }
 
 
