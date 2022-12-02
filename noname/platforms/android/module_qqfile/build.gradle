@@ -2,28 +2,10 @@ plugins {
     id 'com.android.library'
 }
 
+apply from: "${project.rootDir}/common.gradle"
+
 android {
     namespace 'online.nonamekill.android.module.qqfile'
-    compileSdk 32
-
-    defaultConfig {
-        minSdkVersion versionMinSDK
-        targetSdk 32
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
 dependencies {
@@ -33,18 +15,18 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation "androidx.test.espresso:espresso-core:$versionEspressoCore"
 
     // 弹窗工具
-    implementation 'com.github.li-xiaojun:XPopup:2.7.0'
+    implementation "com.github.li-xiaojun:XPopup:$versionXpopup"
     // fastjson
     implementation 'com.alibaba:fastjson:1.1.72.android'
     // 引入androidx
-    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation "androidx.annotation:annotation:$versionAndroidX"
     implementation "androidx.appcompat:appcompat:$versionAppCompat"
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation "androidx.recyclerview:recyclerview:$versionRecyclerview"
     // 下拉刷新球
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$versionSwiperefreshlayout"
 
     implementation project(":lib_common")
 }

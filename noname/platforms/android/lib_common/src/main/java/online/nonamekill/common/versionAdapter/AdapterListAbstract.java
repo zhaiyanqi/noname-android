@@ -114,7 +114,7 @@ public abstract class AdapterListAbstract extends BaseModule {
     }
 
     protected void setRefreshing(boolean refreshing){
-        getActivity().runOnUiThread(()->{
+        runOnUiThread(()->{
             mRefreshLayout.setRefreshing(refreshing);
         });
     }
@@ -129,7 +129,7 @@ public abstract class AdapterListAbstract extends BaseModule {
         if (!mRefreshLayout.isRefreshing())
             setRefreshing(true);
 
-        getActivity().runOnUiThread(()->{
+        runOnUiThread(()->{
             adapter.clearAll();
             loadingText.setVisibility(View.VISIBLE);
         });
@@ -140,6 +140,10 @@ public abstract class AdapterListAbstract extends BaseModule {
             setRefreshing(false);
         }
         loadingText.setVisibility(View.GONE);
+    }
+
+    protected void runOnUiThread(Runnable runnable){
+        getActivity().runOnUiThread(runnable);
     }
 
 }

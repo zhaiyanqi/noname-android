@@ -85,7 +85,7 @@ public class ModuleVersion extends AdapterListAbstract {
                     return Objects.equals(DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH), data.getPath());
                 }, ThreadUtil.getThreadPool())
                         .thenAcceptAsync(del -> {
-                            getActivity().runOnUiThread(() -> {
+                            runOnUiThread(() -> {
                                 RxToast.success(getActivity(), "删除成功");
                             });
                             if (del) {
@@ -96,7 +96,7 @@ public class ModuleVersion extends AdapterListAbstract {
                         }, ThreadUtil.getThreadPool())
                         .exceptionally(throwable -> {
                             GameLog.e(this.getClass(), throwable);
-                            getActivity().runOnUiThread(() -> {
+                            runOnUiThread(() -> {
                                 RxToast.error(getActivity(), "删除失败" + throwable.getMessage());
                             });
                             show.smartDismiss();
@@ -186,7 +186,7 @@ public class ModuleVersion extends AdapterListAbstract {
                 verList.add(data);
             });
 
-            getActivity().runOnUiThread(() -> adapter.replaceList(verList));
+            runOnUiThread(() -> adapter.replaceList(verList));
         });
     }
 

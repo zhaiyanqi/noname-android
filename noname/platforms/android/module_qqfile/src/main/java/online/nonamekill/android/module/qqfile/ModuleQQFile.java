@@ -36,17 +36,18 @@ import online.nonamekill.common.versionAdapter.VersionListRecyclerAdapter;
 public class ModuleQQFile extends AdapterListAbstract {
     // 2022年11月27日21点
     private static final int REQUEST_DATA_ALL_CODE = 2022112721;
-    // 未授权
-    private static final int UNAUTHORIZED = 0;
-    private final String QQ_FILE_RECV = "Android/data/com.tencent.mobileqq/Tencent/QQfile_recv";
-    private final String PRIMARY_QQ_FILE_RECV = "/tree/primary:Android/data/document/primary:";
     // nt_qq_ 频道的标识符 由于只能获取ROOT权限或者虚拟机下才能访问，故放弃实现
     // private static final String FILE_ORI = "/File/Ori";
-    private final DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance();
+    // 未授权
+    private static final int UNAUTHORIZED = 0;
     // 文件不存在
     private final int FILE_NOT_EXISTS = 1;
     // 获取了权限，而且文件存在
     private final int ALL_OK = 2;
+
+    private final String QQ_FILE_RECV = "Android/data/com.tencent.mobileqq/Tencent/QQfile_recv";
+    private final String PRIMARY_QQ_FILE_RECV = "/tree/primary:Android/data/document/primary:";
+    private final DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance();
 
     /*@RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -144,9 +145,7 @@ public class ModuleQQFile extends AdapterListAbstract {
                         array.add(object);
                     });
             List<VersionData> lists = array.toJavaList(VersionData.class);
-            getActivity().runOnUiThread(() -> {
-                adapter.replaceList(lists);
-            });
+            runOnUiThread(() -> adapter.replaceList(lists));
         });
     }
 

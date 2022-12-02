@@ -297,10 +297,10 @@ dependencies {
     implementation(project(path: ":CordovaLib"))
     implementation "androidx.webkit:webkit:1.4.0"
     // 弹窗工具
-    implementation 'com.github.li-xiaojun:XPopup:2.7.0'
+    implementation "com.github.li-xiaojun:XPopup:$versionXpopup"
 
     // PermissionX申请权限的工具
-    implementation 'com.guolindev.permissionx:permissionx:1.6.1'
+    implementation "com.guolindev.permissionx:permissionx:$versionPermissionx"
     // SUB-PROJECT DEPENDENCIES END
 
     // module

@@ -1,7 +1,6 @@
 package online.nonamekill.module.import_progress;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -10,7 +9,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,20 +23,19 @@ import online.nonamekill.module.import_progress.data.MessageData;
 
 public class ImportProgress extends BaseModule {
 
-    private static MessageRecyclerAdapter adapter = null;
-    private static RecyclerView messageRecyclerView = null;
-
     private static final int MSG_UPDATE_PROGRESS = 100;
     private static final int MSG_UPDATE_PROGRESS_DELAY = 100;
-    private static final int TEMP_TASK_COUNT = 7000;
+    // copy zip或者7z文件进度条数 因为zip4j读取需要文件必须存在
     private static final int FETCH_TASK_MAX_PERCENT = 20;
-
     private static final int STATE_FETCH = 1;
     private static final int STATE_COPY = 2;
     private static final int STATE_FINISH = 3;
+    private static MessageRecyclerAdapter adapter = null;
+    private static RecyclerView messageRecyclerView = null;
+    private static int TEMP_TASK_COUNT;
     private final Object mCountLock = new Object();
     private NumberProgressBar mProgressBar = null;
-    private int mImportState = STATE_FINISH;
+    private volatile int mImportState = STATE_FINISH;
     private int mFetchCount = 0;
     private int mFinishTaskCount = 0;
     private int mAllTaskCount = 0;
@@ -62,6 +59,10 @@ public class ImportProgress extends BaseModule {
         }
     };
 
+    public static void setTempTaskCount(int tempTaskCount) {
+        TEMP_TASK_COUNT = tempTaskCount;
+    }
+
     @Nullable
     @Override
     public View getView(Context context) {
@@ -78,12 +79,12 @@ public class ImportProgress extends BaseModule {
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return "导入详情";
     }
 
-
-    private void initAdapterRecyclerView(@NonNull View view){
+    // 初始化Adapter和Recycler插件
+    private void initAdapterRecyclerView(@NonNull View view) {
         messageRecyclerView = view.findViewById(R.id.message_import_info_recycler_view);
         adapter = new MessageRecyclerAdapter();
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -91,8 +92,8 @@ public class ImportProgress extends BaseModule {
         messageRecyclerView.setSelected(true);
         messageRecyclerView.setAdapter(adapter);
     }
-
-    private void initProgressBar(@NonNull View view){
+    // 初始化进度条
+    private void initProgressBar(@NonNull View view) {
         mProgressBar = view.findViewById(R.id.number_progressbar);
         mProgressBar.setMax(100);
         mProgressBar.setProgress(0);
