@@ -40,6 +40,11 @@
         <param name="android-package" value="org.apache.cordova.media.AudioHandler" />
     </feature>
     <preference name="AndroidInsecureFileModeEnabled" value="true" />
+
+    <preference name="SetFullscreen" value="true" />
+    <preference name="Fullscreen" value="true" />
+    <preference name="FullscreenNotImmersive" value="false" />
+
     <feature name="FileTransfer">
         <param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer" />
     </feature>
