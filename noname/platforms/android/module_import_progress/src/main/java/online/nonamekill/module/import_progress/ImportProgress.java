@@ -32,7 +32,7 @@ public class ImportProgress extends BaseModule {
     private static final int STATE_FINISH = 3;
     private static MessageRecyclerAdapter adapter = null;
     private static RecyclerView messageRecyclerView = null;
-    private static int TEMP_TASK_COUNT;
+    private static int TEMP_TASK_COUNT = 1;
     private final Object mCountLock = new Object();
     private NumberProgressBar mProgressBar = null;
     private volatile int mImportState = STATE_FINISH;
