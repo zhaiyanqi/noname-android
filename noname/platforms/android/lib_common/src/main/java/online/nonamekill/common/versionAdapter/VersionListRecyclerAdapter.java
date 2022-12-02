@@ -20,7 +20,6 @@ import java.util.Objects;
 import online.nonamekill.common.util.XPopupUtil;
 import online.nonamekill.lib_common.R;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public abstract class VersionListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     protected final List<VersionData> list = new ArrayList<>();

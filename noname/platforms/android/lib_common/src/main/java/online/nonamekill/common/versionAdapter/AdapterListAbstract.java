@@ -20,11 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import java.util.Objects;
+
 import online.nonamekill.common.module.BaseModule;
 import online.nonamekill.lib_common.R;
 
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public abstract class AdapterListAbstract extends BaseModule {
     // adapter
     protected VersionListRecyclerAdapter adapter = null;
@@ -34,6 +35,8 @@ public abstract class AdapterListAbstract extends BaseModule {
     protected TextView loadingText = null;
     // 刷新按钮
     protected Button refreshButton = null;
+    // 预加载标记
+    private volatile View mRootView = null;
 
 
     @Nullable
@@ -46,6 +49,10 @@ public abstract class AdapterListAbstract extends BaseModule {
 
     @Override
     public void onCreateView(View view){
+        if (Objects.nonNull(mRootView)) return;
+        if (Objects.isNull(view)){
+            view = mRootView =  LayoutInflater.from(getContext()).inflate(R.layout.fragment_version_control, null);
+        }
         // 初始化刷新按钮和字体加载
         initButton2TextView(view);
         // 初始化adapter
@@ -60,6 +67,11 @@ public abstract class AdapterListAbstract extends BaseModule {
         initCustomView(view);
         // 刷新列表
         refresh();
+    }
+
+    @Override
+    public void onPreCreate() {
+        onCreateView(null);
     }
 
     // 初始化刷新按钮和字体加载

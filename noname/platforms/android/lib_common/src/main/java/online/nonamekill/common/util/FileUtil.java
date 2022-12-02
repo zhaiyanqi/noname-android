@@ -14,7 +14,6 @@ import java.text.DecimalFormat;
 import java.util.Objects;
 
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class FileUtil {
     private static final String TAG = "FileUtil";
     private static final int MOD_K = 1024;

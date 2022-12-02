@@ -33,7 +33,6 @@ import online.nonamekill.common.versionAdapter.AdapterListAbstract;
 import online.nonamekill.common.versionAdapter.VersionData;
 import online.nonamekill.common.versionAdapter.VersionListRecyclerAdapter;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class ModuleQQFile extends AdapterListAbstract {
     // 2022年11月27日21点
     private static final int REQUEST_DATA_ALL_CODE = 2022112721;

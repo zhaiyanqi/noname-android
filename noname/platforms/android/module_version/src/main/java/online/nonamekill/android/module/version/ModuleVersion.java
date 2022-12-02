@@ -40,7 +40,6 @@ import online.nonamekill.common.versionAdapter.VersionData;
 import online.nonamekill.common.versionAdapter.VersionListRecyclerAdapter;
 import online.nonamekill.module.version.R;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class ModuleVersion extends AdapterListAbstract {
 
     private final DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance();

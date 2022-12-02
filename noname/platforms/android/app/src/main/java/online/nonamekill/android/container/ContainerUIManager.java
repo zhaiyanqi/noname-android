@@ -55,7 +55,6 @@ public class ContainerUIManager {
     private AnimatorSet mShowModuleViewAnimator = null;
     private AnimatorSet mHideModuleViewAnimator = null;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public ContainerUIManager(@NonNull Activity activity) {
         mActivity = activity;
         mModuleManager = new ModuleManager(activity);

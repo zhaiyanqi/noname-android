@@ -30,7 +30,6 @@ import online.nonamekill.lib_common.R;
 /**
  * Toast封装类
  */
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class RxToast {
 
     private static Toast getCurrentToast = null;

@@ -24,7 +24,6 @@ public class ModuleManager {
     private final ArrayList<BaseModule> mModules = new ArrayList<>();
     private BaseModule mCurrentModule = null;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public ModuleManager(Activity activity) {
         mActivity = activity;
         mModules.add(new ModuleIcon());

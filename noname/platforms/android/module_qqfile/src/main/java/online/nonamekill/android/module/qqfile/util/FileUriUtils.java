@@ -22,7 +22,6 @@ import java.util.Queue;
 
 import online.nonamekill.common.util.AppUtils;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class FileUriUtils {
     public static String root = Environment.getExternalStorageDirectory().getPath() + "/";
 
