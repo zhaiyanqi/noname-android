@@ -48,7 +48,6 @@ public class ImportProgress extends BaseModule {
                     mProgressBar.setProgress(process);
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);
                 } else if (STATE_COPY == mImportState) {
-                    GameLog.e("zyq", "mFinishTaskCount: " + mFinishTaskCount + ", mAllTaskCount: " + mAllTaskCount);
                     int process = FETCH_TASK_MAX_PERCENT + (mFinishTaskCount * 100 / mAllTaskCount);
                     mProgressBar.setProgress(process);
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);
@@ -92,7 +91,11 @@ public class ImportProgress extends BaseModule {
         messageRecyclerView.setSelected(true);
         messageRecyclerView.setAdapter(adapter);
     }
-    // 初始化进度条
+
+    /**
+     * 初始化进度条
+     * @param view
+     */
     private void initProgressBar(@NonNull View view) {
         mProgressBar = view.findViewById(R.id.number_progressbar);
         mProgressBar.setMax(100);

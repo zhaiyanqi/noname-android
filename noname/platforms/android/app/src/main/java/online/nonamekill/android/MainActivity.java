@@ -55,37 +55,39 @@ import online.nonamekill.module.imp.ImportActivity;
 public class MainActivity extends CordovaActivity {
 
     private ContainerUIManager mContainerUIManager = null;
-
-    private WebView mWebView = null;
-
-    private volatile boolean mbUrlLoaded = false;
+    private boolean mbUrlLoaded = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // 隐藏导航条和状态栏
         ActivityUtil.hideNavigationBar(getWindow());
         ActivityUtil.hideSystemUI(getWindow());
 
-
-
-//        Intent actionIntent = getIntent();
-//        boolean isActionView = (null != actionIntent) && Intent.ACTION_VIEW.equals(actionIntent.getAction());
-
-        mContainerUIManager = new ContainerUIManager(this);
+        // UI初始化
         init();
-        // 优先查看游戏版本设置
-        if (checkVersionGamePath() && false){
+
+        // 尝试加载url
+        tryLoadUrl();
+    }
+
+    /**
+     * 尝试通过各种路径加载资源
+     */
+    private void tryLoadUrl() {
+        if (checkVersionGamePath()) {
+            // 优先查看游戏版本设置
             JavaScriptBridge.setGamePath(DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH));
             loadUrl(launchUrl);
             mbUrlLoaded = true;
+        } else if (GameResourceUtil.checkGameResource(this)) {
             // 查看资源目录是否存在
-        } else if (GameResourceUtil.checkGameResource(this) && false) {
             loadUrl(launchUrl);
             mbUrlLoaded = true;
         } else {
             // 查看资源apk是否存在，存在就导入
-            if (GameResourceUtil.checkAssetContext(this) && false) {
+            if (GameResourceUtil.checkAssetContext(this)) {
                 Intent intent = new Intent();
                 intent.setClass(this, ImportActivity.class);
                 startActivity(intent);
@@ -97,6 +99,7 @@ public class MainActivity extends CordovaActivity {
                     XPopup.Builder builder = new XPopup.Builder(this);
                     builder.isDestroyOnDismiss(true)
                             .hasStatusBar(false)
+                            .hasNavigationBar(false)
                             .dismissOnTouchOutside(false)
                             .dismissOnBackPressed(false);
                     ConfirmPopupView confirm = builder.asConfirm("警告", "未找到资源目录，请在版本管理界面进行切换游戏版本，或者下载lib_assets纯资源APK", () -> {
@@ -109,13 +112,44 @@ public class MainActivity extends CordovaActivity {
         }
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        mContainerUIManager = new ContainerUIManager(this);
+    }
+
+    /**
+     * init的时候会嗲用到Cordova中去创建view，最终会中通过此处setContentView
+     */
+    @Override
+    protected void createViews() {
+        setContentView(R.layout.main_layout);
+        RelativeLayout rootView = findViewById(R.id.root_view);
+
+        WebView webView = (WebView) appView.getView();
+        webView.setId(Constant.WEB_VIEW_ID);
+        webView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        webView.setBackgroundColor(Color.BLACK);
+        webView.requestFocusFromTouch();
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        webView.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
+
+        rootView.addView(webView);
+    }
+
     private boolean checkVersionGamePath() {
         String gamePath = DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH);
-        if(TextUtils.isEmpty(gamePath)) return false;
 
-        File file = cordovaInterface.getContext().getExternalFilesDir(gamePath);
-        if(Objects.isNull(file) || !file.exists()) {
+        if (TextUtils.isEmpty(gamePath)) {
+            return false;
+        }
+
+        File file = getExternalFilesDir(gamePath);
+
+        if (Objects.isNull(file) || !file.exists()) {
             RxToast.error(this, "设置的游戏主体不存在！");
+
             return false;
         }
 
@@ -131,7 +165,7 @@ public class MainActivity extends CordovaActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!mbUrlLoaded && GameResourceUtil.checkGameResource(this) && false) {
+        if (!mbUrlLoaded && GameResourceUtil.checkGameResource(this)) {
             loadUrl(launchUrl);
             mbUrlLoaded = true;
         }
@@ -140,23 +174,6 @@ public class MainActivity extends CordovaActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    protected void createViews() {
-        setContentView(R.layout.main_layout);
-        RelativeLayout rootView = findViewById(R.id.root_view);
-
-        mWebView = (WebView) appView.getView();
-        mWebView.setId(Constant.WEB_VIEW_ID);
-        mWebView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mWebView.setBackgroundColor(Color.BLACK);
-        mWebView.requestFocusFromTouch();
-        mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        mWebView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        mWebView.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
-
-        rootView.addView(mWebView);
     }
 
     @Override

@@ -228,11 +228,6 @@ public class ContainerUIManager implements LifecycleEventObserver {
                             mMainContainer.removeAllViews();
                             View view = target.getView(mActivity);
                             mMainContainer.addView(view, params);
-
-                            if (null != view) {
-                                target.onCreateView(view);
-                            }
-
                             // 下一个 module 可见
                             target.onVisible();
                         });
@@ -242,10 +237,6 @@ public class ContainerUIManager implements LifecycleEventObserver {
 
                         View view = target.getView(mActivity);
                         mMainContainer.addView(view, params);
-
-                        if (null != view) {
-                            target.onCreateView(view);
-                        }
 
                         // 下一个 module 可见
                         target.onVisible();

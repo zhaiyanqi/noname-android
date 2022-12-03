@@ -32,7 +32,6 @@ public abstract class AdapterListAbstract extends BaseModule {
     // 预加载标记
     private volatile View mRootView = null;
 
-
     @Nullable
     @Override
     public View getView(Context context) {
@@ -43,7 +42,7 @@ public abstract class AdapterListAbstract extends BaseModule {
 
     @Override
     public void onVisible(){
-        //new Handler(Looper.getMainLooper()).post(this::refresh);
+        runOnUiThread(this::refresh);
     }
 
     @Override
@@ -135,11 +134,7 @@ public abstract class AdapterListAbstract extends BaseModule {
         if (mRefreshLayout.isRefreshing()) {
             setRefreshing(false);
         }
+
         loadingText.setVisibility(View.GONE);
     }
-
-    protected void runOnUiThread(Runnable runnable) {
-        getActivity().runOnUiThread(runnable);
-    }
-
 }

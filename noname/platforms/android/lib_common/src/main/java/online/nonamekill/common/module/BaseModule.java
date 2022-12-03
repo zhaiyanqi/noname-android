@@ -3,6 +3,7 @@ package online.nonamekill.common.module;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -13,12 +14,18 @@ import java.util.Optional;
 import online.nonamekill.common.Constant;
 
 public class BaseModule {
+
+    // 注意变量顺序，修饰符多的，可见性高的放上面
+    protected final Handler mHandler = new Handler();
+
+    private final Object mCreatingLock = new Object();
+
     private Activity mActivity = null;
     private WebView mWebView = null;
 
-    private final Object mCreatingLock = new Object();
     private boolean mbPreCreating = false;
 
+    @CallSuper
     public void onCreate(Activity activity) {
         mActivity = activity;
         mWebView = mActivity.findViewById(Constant.WEB_VIEW_ID);
@@ -36,6 +43,18 @@ public class BaseModule {
     private void updateCreatingState(boolean creating) {
         synchronized (mCreatingLock) {
             mbPreCreating = creating;
+        }
+    }
+
+    protected void runOnUiThread(Runnable runnable) {
+        if (null != runnable) {
+            mHandler.post(runnable);
+        }
+    }
+
+    protected void runOnUiThread(Runnable runnable, int delay) {
+        if (null != runnable) {
+            mHandler.postDelayed(runnable, delay);
         }
     }
 
@@ -74,6 +93,7 @@ public class BaseModule {
     }
 
     public void onDestroy() {
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     protected WebView getWebView() {
