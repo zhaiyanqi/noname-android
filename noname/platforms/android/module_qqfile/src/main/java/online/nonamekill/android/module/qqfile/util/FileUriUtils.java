@@ -149,7 +149,6 @@ public class FileUriUtils {
     }
 
     //直接获取data权限，推荐使用这种方案
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static void startForRoot(Activity context, int REQUEST_CODE_FOR_DIR) {
         Uri uri1 = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata");
         String uri = changeToUri(Environment.getExternalStorageDirectory().getPath());

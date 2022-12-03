@@ -52,6 +52,7 @@ import online.nonamekill.common.data.DataManager;
 import online.nonamekill.common.util.ActivityUtil;
 import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.common.util.RxToast;
+import online.nonamekill.common.util.XPopupUtil;
 import online.nonamekill.module.imp.ImportActivity;
 
 public class MainActivity extends CordovaActivity {
@@ -71,13 +72,13 @@ public class MainActivity extends CordovaActivity {
         init();
 
         // 尝试加载url
-        tryLoadUrl();
+        tryLoadUrl(false);
     }
 
     /**
      * 尝试通过各种路径加载资源
      */
-    private void tryLoadUrl() {
+    private void tryLoadUrl(boolean isOnResume) {
         if (checkVersionGamePath()) {
             // 优先查看游戏版本设置
             JavaScriptBridge.setGamePath(DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH));
@@ -87,7 +88,7 @@ public class MainActivity extends CordovaActivity {
             // 查看资源目录是否存在
             loadUrl(launchUrl);
             mbUrlLoaded = true;
-        } else {
+        } else if(isOnResume) {
             // 查看资源apk是否存在，存在就导入
             if (GameResourceUtil.checkAssetContext(this)) {
                 Intent intent = new Intent();
@@ -97,19 +98,7 @@ public class MainActivity extends CordovaActivity {
             } else {
                 // 没有版本目录不是主文件，资源apk也不存在
                 RxToast.error(this, "未找到lib_assets资源");
-                new Handler().postDelayed(() -> {
-                    XPopup.Builder builder = new XPopup.Builder(this);
-                    builder.isDestroyOnDismiss(true)
-                            .hasStatusBar(false)
-                            .hasNavigationBar(false)
-                            .dismissOnTouchOutside(false)
-                            .dismissOnBackPressed(false);
-                    ConfirmPopupView confirm = builder.asConfirm("警告", "未找到资源目录，请在版本管理界面进行切换游戏版本，或者下载lib_assets纯资源APK", () -> {
-                        mContainerUIManager.openModuleContainer("版本管理");
-                    });
-                    confirm.isHideCancel = true;
-                    confirm.show();
-                }, 500);
+                new Handler().postDelayed(() -> XPopupUtil.asConfirm(this, "警告", "未找到资源目录，请在版本管理界面进行切换游戏版本，或者下载lib_assets纯资源APK", true, () -> mContainerUIManager.openModuleContainer("版本管理")), 300);
             }
         }
     }
@@ -167,9 +156,8 @@ public class MainActivity extends CordovaActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!mbUrlLoaded && GameResourceUtil.checkGameResource(this)) {
-            loadUrl(launchUrl);
-            mbUrlLoaded = true;
+        if (!mbUrlLoaded) {
+            tryLoadUrl(true);
         }
     }
 
