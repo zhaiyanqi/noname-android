@@ -71,7 +71,10 @@ public abstract class AdapterListAbstract extends BaseModule {
 
     @Override
     public void onPreCreate() {
-        onCreateView(null);
+        super.onPreCreate();
+
+        // 不能做UI操作，例如WebView初始化，可以初始化布局、加载字体、加载资源、初始化文件等
+//        onCreateView(null);
     }
 
     // 初始化刷新按钮和字体加载
