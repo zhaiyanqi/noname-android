@@ -38,23 +38,16 @@ public class ModuleManager implements LifecycleEventObserver {
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case MSG_MODULE_PRE_CREATED: {
-                    Optional.ofNullable(msg.obj)
-                            .map(name -> getModules((String) name))
-                            .filter(module -> (module == mCurrentModule))
-                            .ifPresent(module -> {
-                                if (null != mPreCreateCallback) {
-                                    mPreCreateCallback.run();
-                                    mPreCreateCallback = null;
-                                }
-                            });
-
-                    break;
-                }
-
-                default:
-                    break;
+            if (msg.what == MSG_MODULE_PRE_CREATED) {
+                Optional.ofNullable(msg.obj)
+                        .map(name -> getModules((String) name))
+                        .filter(module -> (module == mCurrentModule))
+                        .ifPresent(module -> {
+                            if (null != mPreCreateCallback) {
+                                mPreCreateCallback.run();
+                                mPreCreateCallback = null;
+                            }
+                        });
             }
         }
     };

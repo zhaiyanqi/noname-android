@@ -135,9 +135,4 @@ public abstract class AdapterListAbstract extends BaseModule {
         }
         loadingText.setVisibility(View.GONE);
     }
-
-    protected void runOnUiThread(Runnable runnable) {
-        getActivity().runOnUiThread(runnable);
-    }
-
 }

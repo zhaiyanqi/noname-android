@@ -49,25 +49,15 @@ public class ModuleQQFile extends AdapterListAbstract {
     private final String PRIMARY_QQ_FILE_RECV = "/tree/primary:Android/data/document/primary:";
     private final DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance();
 
-    /*@RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public View getView(Context context) {
-        View inflate = LayoutInflater.from(context).inflate(R.layout.module_qqfile_layout, null);
-        return inflate;
-    }*/
-
     @Override
     protected void initAdapter(View view) {
         adapter = new VersionListRecyclerAdapter() {
-
             @Override
             protected void onItemClick(View view, VersionData data) {
-
             }
 
             @Override
             public void onItemDelete(VersionData data) {
-
             }
 
             @Override
@@ -102,8 +92,7 @@ public class ModuleQQFile extends AdapterListAbstract {
             return UNAUTHORIZED;
         }
         // 获取qq下载的文件路径
-        DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(),
-                Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
+        DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
         // 是否存在
         if (Objects.isNull(documentFile)) {
             Toast.makeText(getContext(), "未找到QQ下载的路径！", Toast.LENGTH_SHORT).show();
@@ -128,22 +117,18 @@ public class ModuleQQFile extends AdapterListAbstract {
                     return;
                 }
             }
-            DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(),
-                    Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
+            DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
             JSONArray array = new JSONArray();
             DocumentFile[] documentFiles = documentFile.listFiles();
-            Arrays.stream(documentFiles)
-                    .filter(DocumentFile::isFile)
-                    .filter(file -> file.getName().endsWith(".zip") || file.getName().endsWith(".7z"))
-                    .forEach(file -> {
-                        Map<String, String> object = new HashMap<>();
-                        String name = file.getName();
-                        object.put("name", name);
-                        object.put("date", dateTimeFormat.format(file.lastModified()));
-                        object.put("path", file.getUri().getPath().replace(PRIMARY_QQ_FILE_RECV, ""));
-                        object.put("size", FileUtil.getFileSize(file.length()));
-                        array.add(object);
-                    });
+            Arrays.stream(documentFiles).filter(DocumentFile::isFile).filter(file -> file.getName().endsWith(".zip") || file.getName().endsWith(".7z")).forEach(file -> {
+                Map<String, String> object = new HashMap<>();
+                String name = file.getName();
+                object.put("name", name);
+                object.put("date", dateTimeFormat.format(file.lastModified()));
+                object.put("path", file.getUri().getPath().replace(PRIMARY_QQ_FILE_RECV, ""));
+                object.put("size", FileUtil.getFileSize(file.length()));
+                array.add(object);
+            });
             List<VersionData> lists = array.toJavaList(VersionData.class);
             runOnUiThread(() -> adapter.replaceList(lists));
         });
@@ -154,8 +139,11 @@ public class ModuleQQFile extends AdapterListAbstract {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        // 如果不是请求Android/data权限的话，就不执行了，因为其他请求页面的回调会报错
-        if (!Objects.equals(requestCode, REQUEST_DATA_ALL_CODE)) return;
+
+        if (!Objects.equals(requestCode, REQUEST_DATA_ALL_CODE)) {
+            // 如果不是请求Android/data权限的话，就不执行了，因为其他请求页面的回调会报错
+            return;
+        }
 
         if (resultCode == RESULT_OK) {
             Uri uri;
@@ -164,9 +152,7 @@ public class ModuleQQFile extends AdapterListAbstract {
             }
             if (Objects.nonNull(uri = intent.getData())) {
                 //关键是这里，这个就是保存这个目录的访问权限
-                getActivity().getContentResolver()
-                        .takePersistableUriPermission(uri, intent.getFlags()
-                                & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
+                getActivity().getContentResolver().takePersistableUriPermission(uri, intent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
                 RxToast.success(getActivity(), "授权目录成功");
                 Toast.makeText(getContext(), "授权目录成功", Toast.LENGTH_SHORT).show();
                 refresh();
