@@ -355,11 +355,11 @@ public class ContainerUIManager implements LifecycleEventObserver {
         openModuleContainer(null);
     }
 
-    // 打开设置菜单切换到对应的模块上，就是太卡了，不推荐使用
+    // 打开设置菜单切换到对应的模块上
     public void openModuleContainer(String moduleName){
         setModuleContainerVisible(View.VISIBLE);
         if(moduleName != null)
-            new Handler(Looper.getMainLooper()).post(()->this.onModuleChanged(moduleName));
+            new Handler(Looper.getMainLooper()).postDelayed(()->this.onModuleChanged(moduleName), 500);
     }
 
     private void setModuleContainerVisible(int visible) {

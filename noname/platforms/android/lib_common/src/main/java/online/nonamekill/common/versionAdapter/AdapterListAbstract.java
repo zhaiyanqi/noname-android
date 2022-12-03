@@ -17,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.util.Objects;
 
 import online.nonamekill.common.module.BaseModule;
+import online.nonamekill.common.util.ThreadUtil;
 import online.nonamekill.lib_common.R;
 
 
@@ -43,7 +44,8 @@ public abstract class AdapterListAbstract extends BaseModule {
 
     @Override
     public void onVisible(){
-        //new Handler(Looper.getMainLooper()).post(this::refresh);
+        startLoading();
+        this.refresh();
     }
 
     @Override
@@ -108,9 +110,7 @@ public abstract class AdapterListAbstract extends BaseModule {
     }
 
     protected void setRefreshing(boolean refreshing) {
-        runOnUiThread(() -> {
-            mRefreshLayout.setRefreshing(refreshing);
-        });
+        mRefreshLayout.setRefreshing(refreshing);
     }
 
     protected abstract void refresh();
@@ -124,10 +124,8 @@ public abstract class AdapterListAbstract extends BaseModule {
         if (!mRefreshLayout.isRefreshing())
             setRefreshing(true);
 
-        runOnUiThread(() -> {
-            adapter.clearAll();
-            loadingText.setVisibility(View.VISIBLE);
-        });
+        adapter.clearAll();
+        loadingText.setVisibility(View.VISIBLE);
     }
 
     // 加载结束的操作

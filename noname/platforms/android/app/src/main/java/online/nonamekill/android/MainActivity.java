@@ -36,7 +36,9 @@ import android.widget.RelativeLayout;
 import androidx.annotation.RequiresApi;
 
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.impl.ConfirmPopupView;
+import com.lxj.xpopup.interfaces.XPopupCallback;
 
 import org.apache.cordova.CordovaActivity;
 
