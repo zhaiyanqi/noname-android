@@ -21,7 +21,8 @@
         start: function () {
             var url = this.url;
             var loadFailed = function () {
-                window.location.reload();
+                alert("主要文件加载失败，请检查文件\n\b文件路径：" + this.src);
+//                window.location.reload();
             }
 
             var load = function (src, onload, onerror) {

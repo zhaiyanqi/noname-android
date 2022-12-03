@@ -10,13 +10,13 @@ import java.util.concurrent.TimeUnit;
 
 public class ThreadUtil {
     // 获取手机CPU内核储量
-    private static final int AVAILABLE_PROCESSORS = Math.max(2, Runtime.getRuntime().availableProcessors());
+    private static final int AVAILABLE_PROCESSORS = Math.max(3, Runtime.getRuntime().availableProcessors());
 
     // 通用线程
     private static ExecutorService threadPool = null;
 
     public static void init() {
-        threadPool = Executors.newFixedThreadPool(3);
+        threadPool = Executors.newFixedThreadPool(AVAILABLE_PROCESSORS);
     }
 
     public static ExecutorService getThreadPool() {

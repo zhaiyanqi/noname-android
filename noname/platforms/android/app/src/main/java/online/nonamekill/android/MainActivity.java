@@ -75,17 +75,17 @@ public class MainActivity extends CordovaActivity {
         mContainerUIManager = new ContainerUIManager(this);
         init();
         // 优先查看游戏版本设置
-        if (checkVersionGamePath()){
+        if (checkVersionGamePath() && false){
             JavaScriptBridge.setGamePath(DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH));
             loadUrl(launchUrl);
             mbUrlLoaded = true;
             // 查看资源目录是否存在
-        } else if (GameResourceUtil.checkGameResource(this)) {
+        } else if (GameResourceUtil.checkGameResource(this) && false) {
             loadUrl(launchUrl);
             mbUrlLoaded = true;
         } else {
             // 查看资源apk是否存在，存在就导入
-            if (GameResourceUtil.checkAssetContext(this)) {
+            if (GameResourceUtil.checkAssetContext(this) && false) {
                 Intent intent = new Intent();
                 intent.setClass(this, ImportActivity.class);
                 startActivity(intent);
@@ -131,7 +131,7 @@ public class MainActivity extends CordovaActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!mbUrlLoaded && GameResourceUtil.checkGameResource(this)) {
+        if (!mbUrlLoaded && GameResourceUtil.checkGameResource(this) && false) {
             loadUrl(launchUrl);
             mbUrlLoaded = true;
         }

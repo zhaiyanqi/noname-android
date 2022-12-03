@@ -143,10 +143,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <WebView
-        android:id="@+id/web_view_local_extension"
-        android:layout_width="1px"
-        android:layout_height="1px"
-        tools:ignore="MissingConstraints" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

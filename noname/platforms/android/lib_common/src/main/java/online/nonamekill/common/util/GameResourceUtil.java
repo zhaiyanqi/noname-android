@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 
-import androidx.annotation.RequiresApi;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -119,7 +116,8 @@ public class GameResourceUtil {
             // 使用try-while-resource 自动关闭流
             try(FileOutputStream out = new FileOutputStream(outFile);
             InputStream in = assetManager.open(file);) {
-                byte[] buf = new byte[1024];
+                int available = in.available();
+                byte[] buf = new byte[Math.min(1024 * 8, Math.max(available, 99))];
                 int len;
 
                 while ((len = in.read(buf)) > 0) {
