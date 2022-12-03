@@ -20,6 +20,14 @@ public class ModuleIcon extends BaseModule {
 
     @Override
     public void onPreCreate() {
+        super.onPreCreate();
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         createViews();
     }
 

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ThreadUtil {
     // 获取手机CPU内核储量
-    private static final int NCPU = Math.max(2, Runtime.getRuntime().availableProcessors());
+    private static final int AVAILABLE_PROCESSORS = Math.max(2, Runtime.getRuntime().availableProcessors());
 
     // 通用线程
     private static ExecutorService threadPool = null;
@@ -19,7 +19,7 @@ public class ThreadUtil {
         threadPool = Executors.newFixedThreadPool(3);
     }
 
-    public static ExecutorService getThreadPool(){
+    public static ExecutorService getThreadPool() {
         return threadPool;
     }
 
@@ -27,11 +27,11 @@ public class ThreadUtil {
         threadPool.execute(runnable);
     }
 
-    public static Future<?> submit(Runnable runnable){
+    public static Future<?> submit(Runnable runnable) {
         return threadPool.submit(runnable);
     }
 
-    public static <T> Future<T> submit(Callable<T> task){
+    public static <T> Future<T> submit(Callable<T> task) {
         return threadPool.submit(task);
     }
 
@@ -46,7 +46,7 @@ public class ThreadUtil {
             throw new IllegalArgumentException("[blockingCoefficient] must between 0 and 1, or equals 0.");
         }
         // 最佳的线程数 = CPU可用核心数 / (1 - 阻塞系数)
-        return (int) (NCPU / (1 - blockingCoefficient));
+        return (int) (AVAILABLE_PROCESSORS / (1 - blockingCoefficient));
     }
 
 

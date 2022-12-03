@@ -125,8 +125,6 @@ public class MainActivity extends CordovaActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        mContainerUIManager.onPause();
     }
 
     @Override
@@ -137,15 +135,11 @@ public class MainActivity extends CordovaActivity {
             loadUrl(launchUrl);
             mbUrlLoaded = true;
         }
-
-        mContainerUIManager.onResume();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        mContainerUIManager.onDestroy();
     }
 
     @Override
@@ -163,7 +157,6 @@ public class MainActivity extends CordovaActivity {
         mWebView.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
 
         rootView.addView(mWebView);
-        mContainerUIManager.onCreate();
     }
 
     @Override

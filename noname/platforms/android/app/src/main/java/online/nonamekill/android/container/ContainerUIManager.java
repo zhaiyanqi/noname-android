@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,12 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.customview.widget.ViewDragHelper;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +39,7 @@ import online.nonamekill.common.data.DataManager;
 import online.nonamekill.common.module.BaseModule;
 import online.nonamekill.common.util.ThreadUtil;
 
-public class ContainerUIManager {
+public class ContainerUIManager implements LifecycleEventObserver {
 
     @NonNull
     private final Activity mActivity;
@@ -43,6 +49,7 @@ public class ContainerUIManager {
 
     private RelativeLayout mContainerRoot = null;
     private RelativeLayout mMainContainer = null;
+    private View mLoadingView = null;
     private SettingButton mSettingButton = null;
     private RelativeLayout.LayoutParams mSettingButtonParams = null;
 
@@ -55,29 +62,46 @@ public class ContainerUIManager {
     private AnimatorSet mShowModuleViewAnimator = null;
     private AnimatorSet mHideModuleViewAnimator = null;
 
-    public ContainerUIManager(@NonNull Activity activity) {
+    public ContainerUIManager(@NonNull AppCompatActivity activity) {
         mActivity = activity;
+        activity.getLifecycle().addObserver(this);
+
         mModuleManager = new ModuleManager(activity);
     }
 
-    public void onCreate() {
-        mModuleManager.onCreate();
+    @Override
+    public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+        switch (event) {
+            case ON_CREATE:
+                onCreate();
+                break;
+            case ON_RESUME:
+                onResume();
+                break;
+            case ON_PAUSE:
+                onPause();
+                break;
+            case ON_DESTROY:
+                onDestroy();
+                break;
+            default:
+                break;
+        }
+    }
 
+    public void onCreate() {
         initContainerView();
         initModuleRecyclerView();
         initAnimator();
     }
 
     public void onPause() {
-        mModuleManager.onPause();
     }
 
     public void onResume() {
-        mModuleManager.onResume();
     }
 
     public void onDestroy() {
-        mModuleManager.onDestroy();
     }
 
     private void initAnimator() {
@@ -187,16 +211,44 @@ public class ContainerUIManager {
         if (mModuleManager.checkToChangeModule(target)) {
             mHideModuleViewAnimator.removeAllListeners();
             mModuleManager.doChange(target);
+
+            // 前一个module不可见
+            target.onInVisible();
             mMainContainer.removeAllViews();
-            View view = target.getView(mActivity);
+
             mHideModuleViewAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (null != view) {
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                        ViewGroup.LayoutParams.MATCH_PARENT);
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT);
+
+                    if (target.isPreCreating()) {
+                        mMainContainer.addView(mLoadingView, params);
+                        mModuleManager.setPreCreateCallBack(() -> {
+                            mMainContainer.removeAllViews();
+                            View view = target.getView(mActivity);
+                            mMainContainer.addView(view, params);
+
+                            if (null != view) {
+                                target.onCreateView(view);
+                            }
+
+                            // 下一个 module 可见
+                            target.onVisible();
+                        });
+                    } else {
+                        // 清空回调
+                        mModuleManager.setPreCreateCallBack(null);
+
+                        View view = target.getView(mActivity);
                         mMainContainer.addView(view, params);
-                        target.onCreateView(view);
+
+                        if (null != view) {
+                            target.onCreateView(view);
+                        }
+
+                        // 下一个 module 可见
+                        target.onVisible();
                     }
 
                     mShowModuleViewAnimator.start();
@@ -240,6 +292,9 @@ public class ContainerUIManager {
         });
 
         mSettingDragHelper = ViewDragHelper.create(mRootView, new SettingDragCallback());
+
+        // mLoadingView
+        mLoadingView = LayoutInflater.from(mActivity).inflate(R.layout.container_loading_view, null);
     }
 
     public boolean dispatchTouchEvent(MotionEvent ev) {
