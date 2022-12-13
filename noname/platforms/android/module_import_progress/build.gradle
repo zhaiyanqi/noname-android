@@ -17,4 +17,18 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$versionEspressoCore"
     // https://github.com/daimajia/NumberProgressBar 进度条
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+
+    // rxandorid
+    implementation "io.reactivex.rxjava3:rxandroid:$versionRxAndroid"
+    implementation "io.reactivex.rxjava3:rxjava:$versionRxJava"
+    // zip4j
+    implementation "net.lingala.zip4j:zip4j:$versionZip4j"
+    // hutool 工具包
+    implementation group: 'com.xiaoleilu', name: 'hutool', version: '2.16.2'
+    // fastjson
+    implementation 'com.alibaba:fastjson:1.1.72.android'
+    // 弹窗工具
+    implementation "com.github.li-xiaojun:XPopup:$versionXpopup"
+    // PermissionX申请权限的工具
+    implementation "com.guolindev.permissionx:permissionx:$versionPermissionx"
 }
