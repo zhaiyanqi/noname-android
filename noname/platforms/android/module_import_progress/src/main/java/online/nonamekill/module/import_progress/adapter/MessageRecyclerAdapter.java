@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.xiaoleilu.hutool.util.StrUtil;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,7 +49,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         MessageHolder holder = (MessageHolder) viewHolder;
         MessageData data = list.get(position);
 
-        if (!TextUtils.isEmpty(data.getType())) {
+        if (StrUtil.isNotEmpty(data.getType())) {
             String ip = data.getMessage();
             SpannableString spannable = new SpannableString(ip);
             spannable.setSpan(new ForegroundColorSpan(Color.parseColor(data.getType())), 0, ip.length(), SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -74,7 +76,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void addMessage(MessageData data) {
         data.setThreadDate(Thread.currentThread().getName() + " - "+dateFormat.format(new Date()));
         list.add(data);
-        notifyItemChanged(list.indexOf(data));
+        //notifyItemChanged(list.indexOf(data));
     }
 
     public List<MessageData> getList() {
