@@ -38,6 +38,15 @@ import online.nonamekill.common.versionAdapter.VersionListRecyclerAdapter;
 import online.nonamekill.module.import_progress.ImportProgress;
 
 public class ModuleQQFile extends AdapterListAbstract {
+    private final List<String> suffix = new ArrayList<String>(){{
+        this.add(".7z");
+        this.add(".zip");
+        this.add(".rar");
+        this.add(".gz");
+        this.add(".tar");
+        this.add(".cpio");
+    }};
+
     // 2022年11月27日21点
     private static final int REQUEST_DATA_ALL_CODE = 2022112721;
     // nt_qq_ 频道的标识符 由于只能获取ROOT权限或者虚拟机下才能访问，故放弃实现
@@ -151,7 +160,7 @@ public class ModuleQQFile extends AdapterListAbstract {
 
     @Override
     protected void refresh() {
-        ThreadUtil.submit(() -> {
+        ThreadUtil.execute(() -> {
             int permission = checkPermission();
             switch (permission) {
                 case UNAUTHORIZED: {
@@ -171,7 +180,7 @@ public class ModuleQQFile extends AdapterListAbstract {
             DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
             JSONArray array = new JSONArray();
             DocumentFile[] documentFiles = documentFile.listFiles();
-            Arrays.stream(documentFiles).filter(DocumentFile::isFile).filter(file -> file.getName().endsWith(".zip") || file.getName().endsWith(".7z")).forEach(file -> {
+            Arrays.stream(documentFiles).filter(DocumentFile::isFile).filter(file -> suffix.stream().anyMatch(item->file.getName().endsWith(item))).forEach(file -> {
                 Map<String, String> object = new HashMap<>();
                 String name = file.getName();
                 object.put("name", name);

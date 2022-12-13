@@ -158,9 +158,7 @@ public class ModuleVersion extends AdapterListAbstract {
     }
 
     private void findAllGameFileInRootView(boolean includeSd) {
-        ThreadUtil.submit(() -> {
-
-            startLoading();
+        ThreadUtil.execute(() -> {
 
             File root = getContext().getExternalFilesDir(null);
             List<File> list = new ArrayList<>(GameResourceUtil.findGameInPath(root));
@@ -199,7 +197,7 @@ public class ModuleVersion extends AdapterListAbstract {
                         .request((allGranted, grantedList, deniedList) -> findAllGameFileInRootView(allGranted));
             });
         } else {
-            ThreadUtil.submit(() -> findAllGameFileInRootView(true));
+            findAllGameFileInRootView(true);
         }
     }
 

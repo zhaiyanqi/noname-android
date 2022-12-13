@@ -58,7 +58,6 @@ public class ModuleManager implements LifecycleEventObserver {
         mModules.add(new ModuleQQFile());
         mModules.add(new ModuleVersion());
         mModules.add(new ModuleServer());
-        mModules.add(new ImportProgress());
         mModules.add(new ModuleAbout());
         activity.getLifecycle().addObserver(this);
     }

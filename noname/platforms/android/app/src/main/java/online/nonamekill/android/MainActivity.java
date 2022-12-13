@@ -54,6 +54,7 @@ import online.nonamekill.common.util.GameResourceUtil;
 import online.nonamekill.common.util.RxToast;
 import online.nonamekill.common.util.XPopupUtil;
 import online.nonamekill.module.imp.ImportActivity;
+import online.nonamekill.module.import_progress.ImportProgress;
 
 public class MainActivity extends CordovaActivity {
 
@@ -76,10 +77,22 @@ public class MainActivity extends CordovaActivity {
     }
 
     /**
+     *  1.首先查看是否从外部打开此应用<br/>
+     *  2.检查游戏版本路径设置，如果设置了，那么加载路径<br/>
+     *  3.检查file/resource是否存在，如果存在，那么加载路径<br/>
+     *  4.检查是否安装了lib_asset的资源apk,如果安装了那就进行资源导入<br/>
      * 尝试通过各种路径加载资源
      */
     private void tryLoadUrl(boolean isOnResume) {
-        if (checkVersionGamePath()) {
+        Intent actionIntent = getIntent();
+        boolean isActionView = (null != actionIntent) && Intent.ACTION_VIEW.equals(actionIntent.getAction());
+        if(isActionView){
+            Intent intent = new Intent();
+            intent.setData(actionIntent.getData());
+            intent.setClass(this, ImportProgress.class);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+        }else if (checkVersionGamePath()) {
             // 优先查看游戏版本设置
             JavaScriptBridge.setGamePath(DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH));
             loadUrl(launchUrl);
@@ -107,6 +120,7 @@ public class MainActivity extends CordovaActivity {
     protected void init() {
         super.init();
         mContainerUIManager = new ContainerUIManager(this);
+        XPopup.setPrimaryColor(getResources().getColor(R.color.colorPrimary));
     }
 
     /**

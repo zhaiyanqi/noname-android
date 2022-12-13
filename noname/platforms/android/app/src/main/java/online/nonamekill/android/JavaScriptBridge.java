@@ -8,6 +8,8 @@ import android.webkit.JavascriptInterface;
 import java.io.File;
 
 import online.nonamekill.common.Constant;
+import online.nonamekill.common.data.DataKey;
+import online.nonamekill.common.data.DataManager;
 
 public class JavaScriptBridge {
     public static final String TAG = "JavaScriptBridge";
@@ -31,7 +33,9 @@ public class JavaScriptBridge {
 
         if (null != mContext && TextUtils.isEmpty(gamePath)) {
             rootFiles = mContext.getExternalFilesDir(Constant.GAME_FOLDER);
-            setGamePath(rootFiles.getAbsolutePath());
+            String path = rootFiles.getAbsolutePath();
+            setGamePath(path);
+            DataManager.getInstance().setValue(DataKey.KEY_GAME_PATH, path);
         }else {
             rootFiles = new File(gamePath);
         }

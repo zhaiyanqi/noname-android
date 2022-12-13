@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="online.nonamekill.android.module.icon"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="online.nonamekill.android.module.icon">
 
     <application>
 
@@ -19,13 +19,35 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <!-- zip -->
                 <data
                     android:host="*"
                     android:mimeType="application/zip"
                     android:scheme="content" />
+                <!-- 7z -->
                 <data
                     android:host="*"
                     android:mimeType="application/7z"
+                    android:scheme="content" />
+                <!-- rar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/rar"
+                    android:scheme="content" />
+                <!-- gz -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-gzip"
+                    android:scheme="content" />
+                <!-- tar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-tar"
+                    android:scheme="content" />
+                <!-- cpio -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-cpio"
                     android:scheme="content" />
             </intent-filter>
         </activity-alias>
@@ -45,13 +67,35 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <!-- zip -->
                 <data
                     android:host="*"
                     android:mimeType="application/zip"
                     android:scheme="content" />
+                <!-- 7z -->
                 <data
                     android:host="*"
                     android:mimeType="application/7z"
+                    android:scheme="content" />
+                <!-- rar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/rar"
+                    android:scheme="content" />
+                <!-- gz -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-gzip"
+                    android:scheme="content" />
+                <!-- tar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-tar"
+                    android:scheme="content" />
+                <!-- cpio -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-cpio"
                     android:scheme="content" />
             </intent-filter>
         </activity-alias>
@@ -71,13 +115,35 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <!-- zip -->
                 <data
                     android:host="*"
                     android:mimeType="application/zip"
                     android:scheme="content" />
+                <!-- 7z -->
                 <data
                     android:host="*"
                     android:mimeType="application/7z"
+                    android:scheme="content" />
+                <!-- rar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/rar"
+                    android:scheme="content" />
+                <!-- gz -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-gzip"
+                    android:scheme="content" />
+                <!-- tar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-tar"
+                    android:scheme="content" />
+                <!-- cpio -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-cpio"
                     android:scheme="content" />
             </intent-filter>
         </activity-alias>
@@ -97,13 +163,35 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <!-- zip -->
                 <data
                     android:host="*"
                     android:mimeType="application/zip"
                     android:scheme="content" />
+                <!-- 7z -->
                 <data
                     android:host="*"
                     android:mimeType="application/7z"
+                    android:scheme="content" />
+                <!-- rar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/rar"
+                    android:scheme="content" />
+                <!-- gz -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-gzip"
+                    android:scheme="content" />
+                <!-- tar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-tar"
+                    android:scheme="content" />
+                <!-- cpio -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-cpio"
                     android:scheme="content" />
             </intent-filter>
         </activity-alias>
