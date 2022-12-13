@@ -66,14 +66,35 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-
+                <!-- zip -->
                 <data
                     android:host="*"
                     android:mimeType="application/zip"
                     android:scheme="content" />
+                <!-- 7z -->
                 <data
                     android:host="*"
                     android:mimeType="application/7z"
+                    android:scheme="content" />
+                <!-- rar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/rar"
+                    android:scheme="content" />
+                <!-- gz -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-gzip"
+                    android:scheme="content" />
+                <!-- tar -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-tar"
+                    android:scheme="content" />
+                <!-- cpio -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-cpio"
                     android:scheme="content" />
             </intent-filter>
 

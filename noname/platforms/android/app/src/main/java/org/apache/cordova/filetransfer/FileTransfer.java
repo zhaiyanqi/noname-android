@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
@@ -167,6 +168,11 @@ public class FileTransfer extends CordovaPlugin {
         if (action.equals("upload") || action.equals("download")) {
             String source = args.getString(0);
             String target = args.getString(1);
+
+            try{
+                // 中文路径乱码，需要解码两次才能行
+                target = URLDecoder.decode(URLDecoder.decode(target,"utf-8"), "utf-8");
+            }catch (Exception ignored){}
 
             if (action.equals("upload")) {
                 upload(source, target, args, callbackContext);
