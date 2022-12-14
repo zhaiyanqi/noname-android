@@ -142,7 +142,7 @@ class JavaBridgeInterface {
     }
 
     public void callFun(String funName, Object... param) {
-        if (StrUtil.isNotEmpty(funName)) {
+        if (StrUtil.isEmpty(funName)) {
             return;
         }
 

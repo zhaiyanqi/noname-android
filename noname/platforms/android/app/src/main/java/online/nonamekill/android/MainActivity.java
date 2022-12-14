@@ -150,7 +150,7 @@ public class MainActivity extends CordovaActivity {
             return false;
         }
 
-        File file = getExternalFilesDir(gamePath);
+        File file = new File(gamePath);
 
         if (Objects.isNull(file) || !file.exists()) {
             RxToast.error(this, "设置的游戏主体不存在！");
