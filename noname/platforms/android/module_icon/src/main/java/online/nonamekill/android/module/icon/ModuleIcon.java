@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import online.nonamekill.common.module.BaseModule;
+import online.nonamekill.common.util.RxToast;
+import online.nonamekill.common.util.XPopupUtil;
 
 public class ModuleIcon extends BaseModule {
 
@@ -42,6 +44,7 @@ public class ModuleIcon extends BaseModule {
         list.add(new IconInfo(R.drawable.icon_noname_version1, "online.nonamekill.android.module.icon.version1"));
         list.add(new IconInfo(R.drawable.icon_noname_version2, "online.nonamekill.android.module.icon.version2"));
         IconListAdapter adapter = new IconListAdapter(list, info -> {
+            XPopupUtil.loading(getActivity(),"正在更换图标").show();
             PackageManager pm = getActivity().getPackageManager();
             pm.setComponentEnabledSetting(getActivity().getComponentName(),
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -49,6 +52,7 @@ public class ModuleIcon extends BaseModule {
             pm.setComponentEnabledSetting(new ComponentName(getActivity(), info.getTagName()),
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP);
+            RxToast.success(getActivity(),"更换完毕后会自动退出软件");
         });
 
         mIconRecyclerView.setAdapter(adapter);
