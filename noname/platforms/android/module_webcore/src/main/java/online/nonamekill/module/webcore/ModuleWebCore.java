@@ -17,7 +17,7 @@ public class ModuleWebCore extends BaseModule {
 
     public static void init(Context context) {
 
-        if (DataManager.getInstance().getValue(DataKey.KEY_IS_X5_CORE) || true) {
+        if (DataManager.getInstance().getValue(DataKey.KEY_IS_X5_CORE)) {
             QbSdk.setDownloadWithoutWifi(true);
             // 在调用TBS初始化、创建WebView之前进行如下配置
             HashMap<String, Object> map = new HashMap<>();

@@ -81,7 +81,7 @@ public class MainActivity extends CordovaActivity {
     @Override
     protected CordovaWebViewEngine makeWebViewEngine() {
         // todo x5引擎的替换与实现
-        if (DataManager.getInstance().getValue(DataKey.KEY_IS_X5_CORE) && false) {
+        if (DataManager.getInstance().getValue(DataKey.KEY_IS_X5_CORE)) {
             return CordovaWebViewImpl.createX5Engine(this, preferences);
         } else {
             return super.makeWebViewEngine();
