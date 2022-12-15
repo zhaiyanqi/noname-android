@@ -41,6 +41,8 @@ import com.lxj.xpopup.impl.ConfirmPopupView;
 import com.lxj.xpopup.interfaces.XPopupCallback;
 
 import org.apache.cordova.CordovaActivity;
+import org.apache.cordova.CordovaWebViewEngine;
+import org.apache.cordova.CordovaWebViewImpl;
 
 import java.io.File;
 import java.util.Objects;
@@ -74,6 +76,16 @@ public class MainActivity extends CordovaActivity {
 
         // 尝试加载url
         tryLoadUrl(false);
+    }
+
+    @Override
+    protected CordovaWebViewEngine makeWebViewEngine() {
+        // todo x5引擎的替换与实现
+        if (DataManager.getInstance().getValue(DataKey.KEY_IS_X5_CORE) && false) {
+            return CordovaWebViewImpl.createX5Engine(this, preferences);
+        } else {
+            return super.makeWebViewEngine();
+        }
     }
 
     /**
@@ -131,16 +143,29 @@ public class MainActivity extends CordovaActivity {
         setContentView(R.layout.main_layout);
         RelativeLayout rootView = findViewById(R.id.root_view);
 
-        WebView webView = (WebView) appView.getView();
-        webView.setId(Constant.WEB_VIEW_ID);
-        webView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        webView.setBackgroundColor(Color.BLACK);
-        webView.requestFocusFromTouch();
-        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        webView.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
+        View view = appView.getView();
 
-        rootView.addView(webView);
+        if (view instanceof WebView) {
+            WebView webView = (WebView) view;
+            webView.setId(Constant.WEB_VIEW_ID);
+            webView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            webView.setBackgroundColor(Color.BLACK);
+            webView.requestFocusFromTouch();
+            webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+            webView.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
+        } else {
+            com.tencent.smtt.sdk.WebView webView = (com.tencent.smtt.sdk.WebView) view;
+            webView.setId(Constant.WEB_VIEW_ID);
+            webView.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            webView.setBackgroundColor(Color.BLACK);
+            webView.requestFocusFromTouch();
+            webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+            webView.addJavascriptInterface(new JavaScriptBridge(this), JavaScriptBridge.JS_PARAMS);
+        }
+
+        rootView.addView(view);
     }
 
     private boolean checkVersionGamePath() {

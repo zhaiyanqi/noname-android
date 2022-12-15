@@ -10,6 +10,9 @@ public class DataKey<T> {
     /** 游戏目录 */
     public static final DataKey<String> KEY_GAME_PATH = new DataKey<>("key_game_path", "");
 
+    // x5内核开关
+    public static final DataKey<Boolean> KEY_IS_X5_CORE = new DataKey<>("key_is_x5_core", false);
+
     private final String key;
     private final T defaultValue;
     private final Class<?> clazz;

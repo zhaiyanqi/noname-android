@@ -17,14 +17,14 @@
        under the License.
 */
 
-package org.apache.cordova.engine;
+package org.apache.cordova.x5engine;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaWebView;

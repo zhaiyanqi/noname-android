@@ -5,6 +5,7 @@ import android.app.Application;
 import online.nonamekill.common.data.DataManager;
 import online.nonamekill.common.util.AppUtils;
 import online.nonamekill.common.util.ThreadUtil;
+import online.nonamekill.module.webcore.ModuleWebCore;
 
 public class MyApplication extends Application {
 
@@ -18,5 +19,8 @@ public class MyApplication extends Application {
         DataManager.getInstance().initialize(this);
         // 初始化线程池
         ThreadUtil.init();
+
+        // 初始化x5内核
+        ModuleWebCore.init(this);
     }
 }
