@@ -12,6 +12,7 @@ import androidx.annotation.CallSuper;
 import java.util.Optional;
 
 import online.nonamekill.common.Constant;
+import online.nonamekill.common.protocol.IWebView;
 
 public class BaseModule {
 
@@ -21,7 +22,7 @@ public class BaseModule {
     private final Object mCreatingLock = new Object();
 
     private Activity mActivity = null;
-    private WebView mWebView = null;
+    private IWebView mWebView = null;
 
     private boolean mbPreCreating = false;
 
@@ -96,7 +97,7 @@ public class BaseModule {
         mHandler.removeCallbacksAndMessages(null);
     }
 
-    protected WebView getWebView() {
+    protected IWebView getWebView() {
         return mWebView;
     }
 

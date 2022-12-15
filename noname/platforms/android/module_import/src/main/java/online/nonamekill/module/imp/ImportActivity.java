@@ -48,7 +48,6 @@ public class ImportActivity extends AppCompatActivity {
                     mProgressBar.setProgress(process);
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);
                 } else if (STATE_COPY == mImportState) {
-                    GameLog.e("zyq", "mFinishTaskCount: " + mFinishTaskCount + ", mAllTaskCount: " + mAllTaskCount);
                     int process = FETCH_TASK_MAX_PERCENT + (mFinishTaskCount * 100 / mAllTaskCount);
                     mProgressBar.setProgress(process);
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_UPDATE_PROGRESS), MSG_UPDATE_PROGRESS_DELAY);

@@ -79,6 +79,9 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$versionAppCompat"
     implementation "com.google.android.material:material:$versionMaterial"
     implementation "androidx.webkit:webkit:${cordovaConfig.ANDROIDX_WEBKIT_VERSION}"
+
+    implementation project(":lib_common")
+    api 'com.tencent.tbs:tbssdk:44226'
 }
 
 /**

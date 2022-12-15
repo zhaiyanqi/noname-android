@@ -312,6 +312,7 @@ dependencies {
     implementation project(":module_version")
     implementation project(":module_server")
     implementation project(":module_import_progress")
+    implementation project(":module_webcore")
 }
 
 def addSigningProps(propsFilePath, signingConfig) {

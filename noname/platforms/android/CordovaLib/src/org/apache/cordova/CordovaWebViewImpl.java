@@ -85,6 +85,10 @@ public class CordovaWebViewImpl implements CordovaWebView {
         }
     }
 
+    public static CordovaWebViewEngine createX5Engine(Context context, CordovaPreferences preferences) {
+        return new org.apache.cordova.x5engine.SystemWebViewEngine(context, preferences);
+    }
+
     public CordovaWebViewImpl(CordovaWebViewEngine cordovaWebViewEngine) {
         this.engine = cordovaWebViewEngine;
     }
