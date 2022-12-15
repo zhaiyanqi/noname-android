@@ -1,9 +1,6 @@
 package online.nonamekill.common.util;
 
 import android.content.Context;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,10 +50,8 @@ public class FileUtil {
     }
 
     public static float fileSizeToMb(long size) {
-
         float result = size * 1f / MOD_K;
         result = result / MOD_K;
-
         return result;
     }
 
@@ -81,11 +76,6 @@ public class FileUtil {
 
         return length;
     }
-
-    private static String getFileName(String path) {
-        return path.substring(path.lastIndexOf(File.separator) + 1);
-    }
-
 
     // 备份
     public static void backupWebContentToPath(Context context, String curPath, String toPath) {
@@ -128,10 +118,6 @@ public class FileUtil {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                } finally {
-//                    MsgVersionControl msg = new MsgVersionControl();
-//                    msg.setMsgType(MsgVersionControl.MSG_TYPE_CHANGE_ASSET_FINISH);
-//                    EventBus.getDefault().post(msg);
                 }
             });
         }
@@ -171,13 +157,6 @@ public class FileUtil {
             }
         }
     }
-
-
-
-
-
-
-
 
 
     // 移植 hutool 工具包

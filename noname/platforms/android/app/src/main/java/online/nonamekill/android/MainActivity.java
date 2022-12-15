@@ -21,7 +21,6 @@ package online.nonamekill.android;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -29,16 +28,11 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.RequiresApi;
 
 import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.core.BasePopupView;
-import com.lxj.xpopup.impl.ConfirmPopupView;
-import com.lxj.xpopup.interfaces.XPopupCallback;
 
 import org.apache.cordova.CordovaActivity;
 
@@ -59,7 +53,10 @@ import online.nonamekill.module.import_progress.ImportProgress;
 public class MainActivity extends CordovaActivity {
 
     private ContainerUIManager mContainerUIManager = null;
+    // URL 是否加载
     private boolean mbUrlLoaded = false;
+    // 是否打开了视图
+    private boolean mbNullPath = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,13 +83,13 @@ public class MainActivity extends CordovaActivity {
     private void tryLoadUrl(boolean isOnResume) {
         Intent actionIntent = getIntent();
         boolean isActionView = (null != actionIntent) && Intent.ACTION_VIEW.equals(actionIntent.getAction());
-        if(isActionView){
+        if (isActionView) {
             Intent intent = new Intent();
             intent.setData(actionIntent.getData());
             intent.setClass(this, ImportProgress.class);
             startActivity(intent);
             overridePendingTransition(0, 0);
-        }else if (checkVersionGamePath()) {
+        } else if (checkVersionGamePath()) {
             // 优先查看游戏版本设置
             JavaScriptBridge.setGamePath(DataManager.getInstance().getValue(DataKey.KEY_GAME_PATH));
             loadUrl(launchUrl);
@@ -108,7 +105,8 @@ public class MainActivity extends CordovaActivity {
                 intent.setClass(this, ImportActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
-            } else {
+            } else if(!mbNullPath) {
+                mbNullPath = true;
                 // 没有版本目录不是主文件，资源apk也不存在
                 RxToast.error(this, "未找到lib_assets资源");
                 new Handler().postDelayed(() -> XPopupUtil.asConfirm(this, "警告", "未找到资源目录，请在版本管理界面进行切换游戏版本，或者下载lib_assets纯资源APK", true, () -> mContainerUIManager.openModuleContainer("版本管理")), 300);

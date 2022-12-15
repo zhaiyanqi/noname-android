@@ -142,6 +142,7 @@ public class ModuleVersion extends AdapterListAbstract {
             currentPath = data.getPath();
             data.setSelected(true);
             adapter.notifyDataSetChanged();
+            XPopupUtil.asConfirm(getActivity(), "设置游戏主体", "设置完毕，请重新启动游戏！",AppUtils::restartApp, true);
         });
     }
 

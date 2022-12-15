@@ -75,6 +75,10 @@ public class XPopupUtil {
      * @param confirmListener
      * @return
      */
+    public static XPopup.Builder asConfirm(Activity activity, CharSequence title, CharSequence content, OnConfirmListener confirmListener, boolean isHideCancel) {
+        return asConfirm(activity, title, content, null, null, confirmListener, null, isHideCancel);
+    }
+
     public static XPopup.Builder asConfirm(Activity activity, CharSequence title, CharSequence content, OnConfirmListener confirmListener) {
         return asConfirm(activity, title, content, null, null, confirmListener, null, false);
     }
@@ -88,7 +92,8 @@ public class XPopupUtil {
                                            OnCancelListener cancelListener, boolean isHideCancel) {
         XPopup.Builder xPopupBuilder = getXPopupBuilder(activity);
         xPopupBuilder
-                .isViewMode(true)
+                .autoFocusEditText(false)
+                .autoOpenSoftInput(false)
                 .asConfirm(title, content, confirmBtnText, cancelBtnText, confirmListener, cancelListener, isHideCancel, 0)
                 .show();
         return xPopupBuilder;

@@ -247,16 +247,14 @@ public class AppUtils {
      */
     public static void restartApp() {
         final Intent launchIntent = getContext().getPackageManager().getLaunchIntentForPackage(getAppPackageName());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (Objects.nonNull(launchIntent)) {
-                new Handler().postDelayed(() -> {
-                    //添加activity切换动画效果
-                    launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    getContext().startActivity(launchIntent);
-                    killCurrentProcess();
-                    System.exit(0);
-                }, 300);
-            }
+        if (Objects.nonNull(launchIntent)) {
+            new Handler().postDelayed(() -> {
+                //添加activity切换动画效果
+                launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getContext().startActivity(launchIntent);
+                killCurrentProcess();
+                System.exit(0);
+            }, 300);
         }
     }
 
