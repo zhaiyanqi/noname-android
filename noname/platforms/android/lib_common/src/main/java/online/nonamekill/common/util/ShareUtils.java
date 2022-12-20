@@ -119,7 +119,6 @@ public class ShareUtils {
         try {
             delThreadLocalFile();
             delIntentFile(intent);
-            delQQCacheShareFile(activity);
         }catch (RuntimeException e){
             RxToast.error(activity, "删除临时分享文件异常：" + e.getMessage());
             GameLog.e(TAG, e);
@@ -156,23 +155,5 @@ public class ShareUtils {
             e.printStackTrace();
         }
     }
-
-    private static void delQQCacheShareFile(Activity activity) {
-        if(!FileUriUtils.isGrant(activity, "Android/data")) {
-            RxToast.error(activity, "没有授权Android/data目录，无法删除QQ缓存的分享文件");
-            return;
-        }
-        // 从变量里面取到分享的文件
-        File file = fileAtomicReference.get();
-        if(Objects.isNull(file)) return;
-        // 查看有没有这个文件
-        DocumentFile cacheShareFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(activity,
-                Uri.parse(FileUriUtils.changeToUri3("Android/data"))), cacheSharePath + file.getName());
-        // 可能没赋予权限，或者没能找到文件
-        if(Objects.isNull(cacheShareFile) || !cacheShareFile.exists()) return;
-        // 删掉缓存文件，防止占用户存储空间
-        cacheShareFile.delete();
-    }
-
 
 }
