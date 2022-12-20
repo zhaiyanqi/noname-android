@@ -27,6 +27,7 @@ android {
 }
 
 dependencies {
+    // MMKV
     implementation 'com.tencent:mmkv:1.2.14'
     // 弹窗工具
     implementation "com.github.li-xiaojun:XPopup:$versionXpopup"
@@ -37,4 +38,6 @@ dependencies {
     // 下拉刷新球
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$versionSwiperefreshlayout"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    // documentFile
+    implementation 'androidx.documentfile:documentfile:1.0.1'
 }

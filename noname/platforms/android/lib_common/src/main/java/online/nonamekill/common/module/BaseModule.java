@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import online.nonamekill.common.Constant;
 import online.nonamekill.common.protocol.IWebView;
+import online.nonamekill.common.util.ShareUtils;
 
 public class BaseModule {
 
@@ -122,6 +123,7 @@ public class BaseModule {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        ShareUtils.onActivityResult(getActivity(), requestCode, resultCode, intent);
     }
 
     public void onCreateView(View view) {

@@ -1,4 +1,4 @@
-package online.nonamekill.android.module.qqfile.util;
+package online.nonamekill.common.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
 
-import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
@@ -20,19 +19,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
-import online.nonamekill.common.util.AppUtils;
-
 public class FileUriUtils {
+    private static final String PRIVATE_DOCUMENT_TREE = "/tree/primary:Android/data/document/primary:";
     public static String root = Environment.getExternalStorageDirectory().getPath() + "/";
 
-    private static final String PRIVATE_DOCUMENT_TREE = "/tree/primary:Android/data/document/primary:";
-
-
     // 判断是否已经获取了Data权限，改改逻辑就能判断其他目录，懂得都懂
-    public static boolean isGrant(Context context,String path) {
+    public static boolean isGrant(Context context, String path) {
         path = path.replace("/", "%2F");
         for (UriPermission persistedUriPermission : context.getContentResolver().getPersistedUriPermissions()) {
-            if (persistedUriPermission.isReadPermission() && persistedUriPermission.getUri().toString().equals("content://com.android.externalstorage.documents/tree/primary%3A"+path)) {
+            if (persistedUriPermission.isReadPermission() && persistedUriPermission.getUri().toString().equals("content://com.android.externalstorage.documents/tree/primary%3A" + path)) {
                 return true;
             }
         }
@@ -60,13 +55,14 @@ public class FileUriUtils {
 
     //替换掉Android/data目录
     public static String replaceAndroidData(String path) {
-        if(TextUtils.isEmpty(path)) return path;
-        return path.replaceFirst("/storage/emulated/0/Android/data/"+ AppUtils.getAppPackageName() + "/", "");
+        if (TextUtils.isEmpty(path)) return path;
+        return path.replaceFirst("/storage/emulated/0/Android/data/" + AppUtils.getAppPackageName() + "/", "");
     }
+
     public static String replacePath(String path) {
-        if(TextUtils.isEmpty(path)) return path;
+        if (TextUtils.isEmpty(path)) return path;
         return path.replaceFirst("/storage/emulated/0/Android", "")
-                .replaceFirst("/data/","")
+                .replaceFirst("/data/", "")
                 .replaceFirst(AppUtils.getAppPackageName() + "/", "");
     }
 

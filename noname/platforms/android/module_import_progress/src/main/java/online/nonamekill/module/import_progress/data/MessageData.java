@@ -5,10 +5,11 @@ public class MessageData {
     public static final int TYPE_NORMAL = 0;
     public static final String TYPE_IP = "#24ED2D";
     public static final String TYPE_ERROR = "#ff2626";
+    public static final String TYPE_WARING = "FFFFF426";
 
     private String type = null;
     private String threadDate = null;
-    private String message = null;
+    private String message;
 
     public MessageData(String msg) {
         message = msg;

@@ -10,7 +10,6 @@ android {
 
 dependencies {
 
-    implementation "androidx.appcompat:appcompat:$versionAppCompat"
     implementation "com.google.android.material:material:$versionMaterial"
     implementation project(path: ':module_import_progress')
 

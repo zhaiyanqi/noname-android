@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import online.nonamekill.android.module.qqfile.util.FileUriUtils;
+import online.nonamekill.common.util.FileUriUtils;
 import online.nonamekill.common.util.FileUtil;
 import online.nonamekill.common.util.RxToast;
 import online.nonamekill.common.util.ThreadUtil;
