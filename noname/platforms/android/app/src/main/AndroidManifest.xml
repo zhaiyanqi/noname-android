@@ -91,10 +91,18 @@
                     android:host="*"
                     android:mimeType="application/7z"
                     android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-7z-compressed"
+                    android:scheme="content" />
                 <!-- rar -->
                 <data
                     android:host="*"
                     android:mimeType="application/rar"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-rar-compressed"
                     android:scheme="content" />
                 <!-- gz -->
                 <data
@@ -111,6 +119,12 @@
                     android:host="*"
                     android:mimeType="application/x-cpio"
                     android:scheme="content" />
+                <!-- bzip2 -->
+                <data
+                    android:host="*"
+                    android:mimeType="application/x-bzip2"
+                    android:scheme="content"
+                    />
             </intent-filter>
 
         </activity>

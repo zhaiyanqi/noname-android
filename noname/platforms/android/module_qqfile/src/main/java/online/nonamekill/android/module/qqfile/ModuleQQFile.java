@@ -48,6 +48,8 @@ public class ModuleQQFile extends AdapterListAbstract {
         this.add(".gz");
         this.add(".tar");
         this.add(".cpio");
+        this.add(".gzip");
+        this.add(".bz2");
     }};
 
     // 2022年11月27日21点
@@ -234,7 +236,7 @@ public class ModuleQQFile extends AdapterListAbstract {
             DocumentFile[] documentFiles = documentFile.listFiles();
             return Arrays.stream(documentFiles)
                     .filter(DocumentFile::isFile)
-                    .filter(file -> file.getName().endsWith(".zip") || file.getName().endsWith(".7z"))
+                    .filter(file -> suffix.stream().anyMatch(s -> file.getName().toLowerCase().endsWith(s)))
                     .map(file -> {
                         JSONObject object = new JSONObject();
                         String name = file.getName();
