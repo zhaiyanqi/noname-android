@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.impl.AttachListPopupView;
 
@@ -26,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import online.nonamekill.common.util.FileUriUtils;
 import online.nonamekill.common.util.FileUtil;
@@ -60,8 +63,14 @@ public class ModuleQQFile extends AdapterListAbstract {
     // 所有权限已拥有
     private final int ALL_OK = 3;
 
+    // QQ下载文件的地址
     private final String QQ_FILE_RECV = "Android/data/com.tencent.mobileqq/Tencent/QQfile_recv";
     private final String PRIMARY_QQ_FILE_RECV = "/tree/primary:Android/data/document/primary:";
+
+    // nt_qq_ 频道的标识符 部分可以读取识别到
+    private final String NT_QQ = "nt_qq_";
+    private final String FILE_ORI = "/File/Ori";
+
     private final DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance();
 
     @Override
@@ -160,7 +169,7 @@ public class ModuleQQFile extends AdapterListAbstract {
 
     @Override
     protected void refresh() {
-        ThreadUtil.execute(() -> {
+        ThreadUtil.submit(() -> {
             int permission = checkPermission();
             switch (permission) {
                 case UNAUTHORIZED: {
@@ -177,22 +186,70 @@ public class ModuleQQFile extends AdapterListAbstract {
                     return;
                 }
             }
+            // 获取QQ_FILE_RECV的documentFile文件
             DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
+
             JSONArray array = new JSONArray();
-            DocumentFile[] documentFiles = documentFile.listFiles();
-            Arrays.stream(documentFiles).filter(DocumentFile::isFile).filter(file -> suffix.stream().anyMatch(item->file.getName().endsWith(item))).forEach(file -> {
-                Map<String, String> object = new HashMap<>();
-                String name = file.getName();
-                object.put("name", name);
-                object.put("date", dateTimeFormat.format(file.lastModified()));
-                object.put("path", file.getUri().getPath().replace(PRIMARY_QQ_FILE_RECV, ""));
-                object.put("size", FileUtil.getFileSize(file.length()));
-                array.add(object);
-            });
+            // 使用并行，节省一下时间
+            CompletableFuture<List<JSONObject>> qqFileRecvDocumentList = getDocumentList(documentFile);
+            CompletableFuture<List<JSONObject>> ntqqDocumentList = getNtqqDocumentList(documentFile);
+            // 获取两个结果的返回值
+            qqFileRecvDocumentList.thenAcceptBoth(ntqqDocumentList, (jsonObjects, jsonObjects2) -> {
+                array.addAll(jsonObjects);
+                array.addAll(jsonObjects2);
+            }).join();
+
             List<VersionData> lists = array.toJavaList(VersionData.class);
             runOnUiThread(() -> adapter.replaceList(lists));
         });
     }
+
+
+    // 获取QQ频道里面的压缩包
+    private CompletableFuture<List<JSONObject>> getNtqqDocumentList(DocumentFile documentFile){
+        return CompletableFuture.supplyAsync(() -> {
+            List<JSONObject> jsonObjectList = new ArrayList<>();
+            DocumentFile ntqqFile = Arrays.stream(documentFile.listFiles()).filter(file -> file.getName().startsWith(NT_QQ)).findFirst().orElse(null);
+            // 未找到ntqq文件夹，可能不玩qq频道或者不是频道的内测用户
+            if(Objects.isNull(ntqqFile)){
+                return jsonObjectList;
+            }
+            // 寻找qq频道下载压缩包的文件夹
+            DocumentFile ntqqOriFile = FileUriUtils.getTreeDocumentFile(ntqqFile,  FILE_ORI);
+            if(Objects.isNull(ntqqOriFile)){
+                // 当前系统不支持访问qq频道的文件
+                return jsonObjectList;
+            }
+
+            // 可以访问qq频道下载的文件，去执行另一个任务，获取到压缩包
+            jsonObjectList = getDocumentList(ntqqOriFile).join();
+
+            return jsonObjectList;
+        }, ThreadUtil.getThreadPool());
+    }
+
+    // 获取QQ_FILE_RECV里面的压缩包
+    private CompletableFuture<List<JSONObject>> getDocumentList(DocumentFile documentFile) {
+        return CompletableFuture.supplyAsync(() -> {
+            DocumentFile[] documentFiles = documentFile.listFiles();
+            return Arrays.stream(documentFiles)
+                    .filter(DocumentFile::isFile)
+                    .filter(file -> file.getName().endsWith(".zip") || file.getName().endsWith(".7z"))
+                    .map(file -> {
+                        JSONObject object = new JSONObject();
+                        String name = file.getName();
+                        int length = name.length();
+                        if (length > 15)
+                            name = name.substring(0, 15) + "...";
+                        object.put("name", name);
+                        object.put("date", dateTimeFormat.format(file.lastModified()));
+                        object.put("path", file.getUri().getPath().replace(PRIMARY_QQ_FILE_RECV, ""));
+                        object.put("size", FileUtil.getFileSize(file.length()));
+                        return object;
+                    }).collect(Collectors.toList());
+        }, ThreadUtil.getThreadPool());
+    }
+
 
     @SuppressLint("WrongConstant")
     @Override
