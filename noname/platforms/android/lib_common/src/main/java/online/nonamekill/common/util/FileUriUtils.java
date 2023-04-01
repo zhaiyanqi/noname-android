@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 public class FileUriUtils {
     private static final String PRIVATE_DOCUMENT_TREE = "/tree/primary:Android/data/document/primary:";
@@ -75,10 +76,17 @@ public class FileUriUtils {
         return DocumentFile.fromSingleUri(context, Uri.parse("content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata/document/primary%3A" + path2));
     }
 
+    public static DocumentFile getDocumentFile2Android13(Context context, String parentPath,String path) {
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        String path2 = path.replace("/storage/emulated/0/", "").replace("/", "%2F");
+        return DocumentFile.fromSingleUri(context, Uri.parse("content://com.android.externalstorage.documents/tree/primary%3A"+ parentPath +"/document/primary%3A" + path2));
+    }
+
     public static DocumentFile getTreeDocumentFile(DocumentFile documentFile, String path) {
         path = path.replace("Android/data/", "");
-        List<String> list = Arrays.asList(path.split(File.separator));
-        Queue<String> queue = new LinkedList<>(list);
+        Queue<String> queue = Arrays.stream(path.split(File.separator)).filter(str -> !TextUtils.isEmpty(str)).distinct().collect(Collectors.toCollection(LinkedList::new));
         return getTreeDocumentFile(documentFile, queue);
     }
 

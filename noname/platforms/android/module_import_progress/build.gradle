@@ -31,4 +31,6 @@ dependencies {
     implementation "com.github.li-xiaojun:XPopup:$versionXpopup"
     // PermissionX申请权限的工具
     implementation "com.guolindev.permissionx:permissionx:$versionPermissionx"
+    // 7z 解压包引擎
+    implementation 'com.github.omicronapps:7-Zip-JBinding-4Android:Release-16.02-2.02'
 }

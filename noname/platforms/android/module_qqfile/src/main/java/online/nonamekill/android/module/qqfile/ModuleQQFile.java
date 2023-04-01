@@ -23,9 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -33,6 +31,7 @@ import java.util.stream.Collectors;
 import online.nonamekill.common.util.FileUriUtils;
 import online.nonamekill.common.util.FileUtil;
 import online.nonamekill.common.util.RxToast;
+import online.nonamekill.common.util.ShareUtils;
 import online.nonamekill.common.util.ThreadUtil;
 import online.nonamekill.common.util.XPopupUtil;
 import online.nonamekill.common.versionAdapter.AdapterListAbstract;
@@ -41,7 +40,7 @@ import online.nonamekill.common.versionAdapter.VersionListRecyclerAdapter;
 import online.nonamekill.module.import_progress.ImportProgress;
 
 public class ModuleQQFile extends AdapterListAbstract {
-    private final List<String> suffix = new ArrayList<String>(){{
+    private final List<String> suffix = new ArrayList<String>() {{
         this.add(".7z");
         this.add(".zip");
         this.add(".rar");
@@ -55,23 +54,24 @@ public class ModuleQQFile extends AdapterListAbstract {
     // 2022年11月27日21点
     private static final int REQUEST_DATA_ALL_CODE = 2022112721;
     // nt_qq_ 频道的标识符 由于只能获取ROOT权限或者虚拟机下才能访问，故放弃实现
-    // private static final String FILE_ORI = "/File/Ori";
+    private static final String FILE_ORI = "/File/Ori";
+    // nt_qq_ 频道的标识符 部分可以读取识别到
+    private final String NT_QQ = "nt_qq_";
     // 未授权
     private static final int UNAUTHORIZED = 0;
     // 文件不存在
     private final int FILE_NOT_EXISTS = 1;
     // 手机版本不支持(🐔了)
     private final int VERSION_NOT_SUPPORT = 2;
+    // 安卓13读取qq下载的文件
+    private final int UNAUTHORIZED_ANDROID_13_QQ_FILE_RECV = 3;
     // 所有权限已拥有
-    private final int ALL_OK = 3;
+    private final int ALL_OK = -1;
 
     // QQ下载文件的地址
     private final String QQ_FILE_RECV = "Android/data/com.tencent.mobileqq/Tencent/QQfile_recv";
     private final String PRIMARY_QQ_FILE_RECV = "/tree/primary:Android/data/document/primary:";
-
-    // nt_qq_ 频道的标识符 部分可以读取识别到
-    private final String NT_QQ = "nt_qq_";
-    private final String FILE_ORI = "/File/Ori";
+    private final String PRIMARY_QQ_FILE_RECV_13 = "/tree/primary:" + QQ_FILE_RECV + "/document/primary:";
 
     private final DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance();
 
@@ -87,10 +87,11 @@ public class ModuleQQFile extends AdapterListAbstract {
 
                 AttachListPopupView asAttachList = XPopupUtil.asAttachList(getActivity(), attachList.toArray(new String[]{}), view,
                         (position, text) -> {
-                            DocumentFile documentFile = FileUriUtils.getDocumentFile(getActivity(), data.getPath());
+
+                            DocumentFile documentFile = findDocumentFile(data.getPath());
                             switch (text) {
                                 case del:
-                                    XPopupUtil.asConfirm(getActivity(),"提示", "是否删除 " + data.getPath(), () -> onItemDelete(data));
+                                    XPopupUtil.asConfirm(getActivity(), "提示", "是否删除 " + data.getPath(), () -> onItemDelete(data));
                                     break;
                                 case importZip:
                                     Intent intent = new Intent();
@@ -110,11 +111,11 @@ public class ModuleQQFile extends AdapterListAbstract {
             @Override
             public void onItemDelete(VersionData data) {
                 BasePopupView loading = XPopupUtil.loading(getActivity(), "正在删除...");
-                ThreadUtil.submit(()->{
+                ThreadUtil.submit(() -> {
                     String path = data.getPath();
                     DocumentFile documentFile = FileUriUtils.getDocumentFile(getActivity(), path);
                     boolean delete = documentFile.delete();
-                    runOnUiThread(()->{
+                    runOnUiThread(() -> {
                         try {
                             if (delete) RxToast.success(getActivity(), "删除成功：" + data.getName());
                             else RxToast.error(getActivity(), "删除失败：" + data.getName());
@@ -151,14 +152,45 @@ public class ModuleQQFile extends AdapterListAbstract {
         title_text_4.setText("文件路径");
     }
 
+    private DocumentFile getAutoDocumentFile() {
+        DocumentFile documentFile = null;
+        // 安卓11可以授权Android/data
+        if (Build.VERSION.SDK_INT < 32) {
+            documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
+        } else {
+            // 安卓13可以直接访问Android/data里面应用包名
+            documentFile = DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3(QQ_FILE_RECV)));
+        }
+        return documentFile;
+    }
+
+    private DocumentFile findDocumentFile(String path) {
+        // 安卓13以下可以通过授权android/data来循环获取要访问的文件
+        if (Build.VERSION.SDK_INT < 32) {
+            return FileUriUtils.getDocumentFile(getActivity(), path);
+        }
+        // 安卓13需要通过授权的来访问
+        DocumentFile autoDocumentFile = getAutoDocumentFile();
+        path = path.replace(QQ_FILE_RECV, "");
+        return FileUriUtils.getTreeDocumentFile(autoDocumentFile, path);
+    }
+
+
     private int checkPermission() {
-        // 检测版本号 安卓8以下不支持 安卓12以上不支持
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || Build.VERSION.SDK_INT > 31) {
+        // 检测版本号 安卓8以下不支持 安卓13以上不支持，不知道安卓14能不能用同样的方式
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || Build.VERSION.SDK_INT > 33) {
             return VERSION_NOT_SUPPORT;
         }
-        // 检测是否授权
-        if (!FileUriUtils.isGrant(getActivity(), "Android/data")) {
-            return UNAUTHORIZED;
+        if (Build.VERSION.SDK_INT > 32) {
+            if (!FileUriUtils.isGrant(getActivity(), QQ_FILE_RECV)) {
+                // Android/data授权了，但是qq下载的文件没授权
+                return UNAUTHORIZED_ANDROID_13_QQ_FILE_RECV;
+            }
+        } else {
+            // 检测是否授权
+            if (!FileUriUtils.isGrant(getActivity(), "Android/data")) {
+                return UNAUTHORIZED;
+            }
         }
         // 获取qq下载的文件路径
         DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
@@ -179,17 +211,28 @@ public class ModuleQQFile extends AdapterListAbstract {
                             () -> FileUriUtils.startForRoot(getActivity(), REQUEST_DATA_ALL_CODE));
                     return;
                 }
+                case UNAUTHORIZED_ANDROID_13_QQ_FILE_RECV: {
+                    XPopupUtil.asConfirm(getActivity(), "授权QQ下载文件目录提示！", "由于安卓13需要授权【QQ下载文件目录】权限才能使用此功能，是否进行授权？",
+                            () -> FileUriUtils.startFor(QQ_FILE_RECV, getActivity(), REQUEST_DATA_ALL_CODE));
+                    return;
+                }
                 case FILE_NOT_EXISTS: {
                     RxToast.error(getActivity(), "未找到QQ下载的路径！", Toast.LENGTH_SHORT);
                     return;
                 }
-                case VERSION_NOT_SUPPORT:{
-                    RxToast.warning(getActivity(), "手机版本不支持，请使用安卓七以上安卓十三以下版本的手机！");
+                case VERSION_NOT_SUPPORT: {
+                    RxToast.warning(getActivity(), "手机版本不支持，请使用安卓七以上安卓十四以下版本的手机！");
                     return;
                 }
+
             }
             // 获取QQ_FILE_RECV的documentFile文件
-            DocumentFile documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
+            DocumentFile documentFile = null;
+            if (Build.VERSION.SDK_INT < 31) {
+                documentFile = FileUriUtils.getTreeDocumentFile(DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3("Android/data"))), QQ_FILE_RECV);
+            } else {
+                documentFile = DocumentFile.fromTreeUri(getActivity(), Uri.parse(FileUriUtils.changeToUri3(QQ_FILE_RECV)));
+            }
 
             JSONArray array = new JSONArray();
             // 使用并行，节省一下时间
@@ -208,17 +251,17 @@ public class ModuleQQFile extends AdapterListAbstract {
 
 
     // 获取QQ频道里面的压缩包
-    private CompletableFuture<List<JSONObject>> getNtqqDocumentList(DocumentFile documentFile){
+    private CompletableFuture<List<JSONObject>> getNtqqDocumentList(DocumentFile documentFile) {
         return CompletableFuture.supplyAsync(() -> {
             List<JSONObject> jsonObjectList = new ArrayList<>();
             DocumentFile ntqqFile = Arrays.stream(documentFile.listFiles()).filter(file -> file.getName().startsWith(NT_QQ)).findFirst().orElse(null);
             // 未找到ntqq文件夹，可能不玩qq频道或者不是频道的内测用户
-            if(Objects.isNull(ntqqFile)){
+            if (Objects.isNull(ntqqFile)) {
                 return jsonObjectList;
             }
             // 寻找qq频道下载压缩包的文件夹
-            DocumentFile ntqqOriFile = FileUriUtils.getTreeDocumentFile(ntqqFile,  FILE_ORI);
-            if(Objects.isNull(ntqqOriFile)){
+            DocumentFile ntqqOriFile = FileUriUtils.getTreeDocumentFile(ntqqFile, FILE_ORI);
+            if (Objects.isNull(ntqqOriFile)) {
                 // 当前系统不支持访问qq频道的文件
                 return jsonObjectList;
             }
@@ -245,7 +288,7 @@ public class ModuleQQFile extends AdapterListAbstract {
                             name = name.substring(0, 15) + "...";
                         object.put("name", name);
                         object.put("date", dateTimeFormat.format(file.lastModified()));
-                        object.put("path", file.getUri().getPath().replace(PRIMARY_QQ_FILE_RECV, ""));
+                        object.put("path", file.getUri().getPath().replace(PRIMARY_QQ_FILE_RECV, "").replace(PRIMARY_QQ_FILE_RECV_13, ""));
                         object.put("size", FileUtil.getFileSize(file.length()));
                         return object;
                     }).collect(Collectors.toList());
