@@ -4,7 +4,6 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 import android.graphics.Color;
 import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.xiaoleilu.hutool.util.StrUtil;
 
@@ -32,7 +30,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private final List<MessageData> list = new ArrayList<>();
     private final DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
-    private final List<MessageHolder> messageHolderList= new LinkedList<>();
+    private final List<MessageHolder> messageHolderList = new LinkedList<>();
 
     @NonNull
     @Override
@@ -74,7 +72,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void addMessage(MessageData data) {
-        data.setThreadDate(Thread.currentThread().getName() + " - "+dateFormat.format(new Date()));
+        data.setThreadDate(dateFormat.format(new Date()) + " -- " + data.getLogLevelType() + " " + Thread.currentThread().getName());
         list.add(data);
         //notifyItemChanged(list.indexOf(data));
     }
@@ -83,7 +81,7 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return list;
     }
 
-    public List<MessageHolder> getMessageHolderList(){
+    public List<MessageHolder> getMessageHolderList() {
         return messageHolderList;
     }
 

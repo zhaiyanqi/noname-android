@@ -80,10 +80,9 @@
                 return;
             }
             // 及时给缓存添加上
-            if(cache.hasOwnProperty(key)) {
-                console.log("cache set, success, key: " + key + ", value: " + value);
-                cache[key] = value;
-            }
+            console.log("cache set, success, key: " + key + ", value: " + value);
+            cache[key] = value;
+
             var put = lib.db.transaction(['config'], 'readwrite').objectStore('config').put(value, key);
             put.onsuccess = function () {
                 console.log("putDB, success, key: " + key + ", value: " + value);
